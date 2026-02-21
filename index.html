@@ -1,0 +1,805 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NutriTrack — рахуй калорії без зусиль</title>
+  <meta name="description" content="NutriTrack — безкоштовний застосунок для підрахунку калорій, БЖВ, ваги та добавок. Працює як додаток на телефоні без App Store." />
+
+  <!-- OG / Social -->
+  <meta property="og:title" content="NutriTrack — рахуй калорії без зусиль" />
+  <meta property="og:description" content="Безкоштовний трекер калорій, ваги та добавок. Без реклами. Без підписок." />
+  <meta property="og:type" content="website" />
+  <meta property="og:image" content="og-image.png" />
+  <meta name="twitter:card" content="summary_large_image" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800;900&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --green-50:  #f0fdf4;
+      --green-100: #dcfce7;
+      --green-300: #86efac;
+      --green-500: #22c55e;
+      --green-600: #16a34a;
+      --green-700: #15803d;
+      --green-900: #14532d;
+      --text:   #111827;
+      --text-2: #374151;
+      --text-3: #6b7280;
+      --surface: #ffffff;
+      --bg:     #f9fafb;
+      --border: #e5e7eb;
+      --r: 20px;
+      --shadow: 0 2px 16px rgba(0,0,0,0.07);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(255,255,255,0.85);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 24px;
+      display: flex; align-items: center; justify-content: space-between;
+      height: 60px;
+    }
+    .nav-logo {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 800; font-size: 20px;
+      color: var(--green-600);
+      display: flex; align-items: center; gap: 8px;
+      text-decoration: none;
+    }
+    .nav-logo img { width: 28px; height: 28px; border-radius: 8px; flex-shrink: 0; }
+    .nav-cta {
+      background: var(--green-600); color: white;
+      border: none; border-radius: 12px;
+      padding: 10px 20px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px; font-weight: 700;
+      cursor: pointer; text-decoration: none;
+      transition: all 0.15s;
+    }
+    .nav-cta:hover { background: var(--green-700); transform: translateY(-1px); }
+
+    /* ── HERO ── */
+    .hero {
+      padding: 80px 24px 64px;
+      text-align: center;
+      max-width: 680px;
+      margin: 0 auto;
+    }
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: var(--green-50); color: var(--green-700);
+      border: 1px solid var(--green-300);
+      border-radius: 100px; padding: 6px 14px;
+      font-size: 13px; font-weight: 600;
+      margin-bottom: 28px;
+    }
+    .hero-badge span { font-size: 16px; }
+    .hero h1 {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 900; font-size: clamp(36px, 8vw, 60px);
+      line-height: 1.1; color: var(--text);
+      margin-bottom: 20px;
+      letter-spacing: -1px;
+    }
+    .hero h1 em {
+      font-style: normal;
+      color: var(--green-600);
+    }
+    .hero p {
+      font-size: clamp(16px, 2.5vw, 19px);
+      color: var(--text-3);
+      max-width: 480px;
+      margin: 0 auto 36px;
+      line-height: 1.65;
+    }
+    .hero-btns {
+      display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;
+    }
+    .btn-primary {
+      background: var(--green-600); color: white;
+      border: none; border-radius: 14px;
+      padding: 16px 32px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 16px; font-weight: 700;
+      cursor: pointer; text-decoration: none;
+      transition: all 0.2s;
+      box-shadow: 0 4px 20px rgba(22,163,74,0.35);
+      display: inline-flex; align-items: center; gap: 8px;
+    }
+    .btn-primary:hover {
+      background: var(--green-700);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 28px rgba(22,163,74,0.45);
+    }
+    .btn-ghost {
+      background: var(--surface); color: var(--text-2);
+      border: 1.5px solid var(--border); border-radius: 14px;
+      padding: 15px 28px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 16px; font-weight: 600;
+      cursor: pointer; text-decoration: none;
+      transition: all 0.15s;
+    }
+    .btn-ghost:hover { border-color: var(--green-300); color: var(--green-600); background: var(--green-50); }
+
+    .hero-sub {
+      margin-top: 20px;
+      font-size: 13px; color: var(--text-3);
+      display: flex; align-items: center; justify-content: center; gap: 16px;
+      flex-wrap: wrap;
+    }
+    .hero-sub-item {
+      display: flex; align-items: center; gap: 5px;
+    }
+    .hero-sub-item svg { color: var(--green-500); }
+
+    /* ── DEVICES MOCKUP ── */
+    .devices-wrap {
+      max-width: 1000px; margin: 0 auto;
+      padding: 0 24px 80px;
+      display: flex; align-items: flex-end; justify-content: center;
+      gap: 0; position: relative;
+    }
+
+    /* ── LAPTOP ── */
+    .mockup-laptop {
+      position: relative; z-index: 1;
+    }
+    .laptop-body {
+      width: 580px;
+      background: #1a1a1a;
+      border-radius: 14px 14px 0 0;
+      padding: 10px 10px 0;
+      box-shadow: 0 30px 60px rgba(0,0,0,0.25);
+    }
+    .laptop-screen {
+      background: var(--bg);
+      border-radius: 6px;
+      overflow: hidden;
+      height: 360px;
+      display: flex;
+    }
+    /* Sidebar миниатюра */
+    .ls-sidebar {
+      width: 44px; background: var(--surface);
+      border-right: 1px solid var(--border);
+      display: flex; flex-direction: column; align-items: center;
+      padding: 10px 0; gap: 12px; flex-shrink: 0;
+    }
+    .ls-logo {
+      width: 24px; height: 24px; border-radius: 6px;
+      background: var(--green-600); margin-bottom: 6px;
+    }
+    .ls-dot {
+      width: 20px; height: 20px; border-radius: 6px;
+      background: var(--bg);
+    }
+    .ls-dot.active { background: var(--green-50); }
+    /* Main content */
+    .ls-content {
+      flex: 1; overflow: hidden; padding: 14px; display: flex; flex-direction: column; gap: 10px;
+    }
+    .ls-header {
+      font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 16px; color: var(--text);
+    }
+    .ls-row { display: flex; gap: 10px; }
+    .ls-card {
+      background: var(--surface); border-radius: 10px;
+      padding: 10px; box-shadow: var(--shadow); flex: 1;
+    }
+    .ls-card-title { font-size: 8px; font-weight: 700; color: var(--text-3); margin-bottom: 6px; text-transform: uppercase; }
+    .ls-ring-row { display: flex; align-items: center; gap: 8px; }
+    .ls-ring {
+      width: 40px; height: 40px; border-radius: 50%;
+      background: conic-gradient(#22c55e 0% 68%, #e5e7eb 68% 100%);
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+      position: relative;
+    }
+    .ls-ring::after {
+      content: ''; position: absolute;
+      width: 28px; height: 28px; background: var(--surface); border-radius: 50%;
+    }
+    .ls-ring-val {
+      font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 18px; color: var(--text);
+    }
+    .ls-ring-sub { font-size: 8px; color: var(--text-3); }
+    .ls-bar-row { margin-bottom: 4px; }
+    .ls-bar-label { font-size: 8px; color: var(--text-3); display: flex; justify-content: space-between; margin-bottom: 2px; }
+    .ls-bar-track { height: 4px; background: var(--border); border-radius: 99px; overflow: hidden; }
+    .ls-bar-fill { height: 100%; border-radius: 99px; }
+    .ls-meal { display: flex; align-items: center; justify-content: space-between; padding: 5px 0; border-bottom: 1px solid var(--border); }
+    .ls-meal:last-child { border-bottom: none; }
+    .ls-meal-name { font-size: 9px; font-weight: 600; color: var(--text); }
+    .ls-meal-cal { font-size: 9px; font-weight: 700; color: var(--green-600); }
+    /* Laptop screenshot mode */
+    .laptop-screenshot {
+      width: 100%; height: 100%; object-fit: cover; object-position: top left;
+      display: block;
+    }
+    .laptop-base {
+      width: 580px; height: 14px;
+      background: linear-gradient(to bottom, #2a2a2a, #1a1a1a);
+      border-radius: 0 0 4px 4px;
+    }
+    .laptop-stand {
+      width: 160px; height: 8px;
+      background: #222; border-radius: 0 0 6px 6px;
+      margin: 0 auto;
+    }
+
+    /* ── PHONE ── */
+    .mockup-phone {
+      width: 200px; flex-shrink: 0;
+      background: #111;
+      border-radius: 32px;
+      padding: 10px;
+      box-shadow: 0 30px 60px rgba(0,0,0,0.3), 0 0 0 1px rgba(255,255,255,0.08);
+      position: relative;
+      margin-left: -32px;
+      margin-bottom: 24px;
+      z-index: 2;
+    }
+    .mockup-screen {
+      background: var(--bg);
+      border-radius: 23px;
+      overflow: hidden;
+      height: 400px;
+    }
+    /* Phone screenshot mode */
+    .phone-screenshot {
+      width: 100%; height: 100%; object-fit: cover; object-position: top;
+      display: block; border-radius: 23px;
+    }
+    /* Phone placeholder content */
+    .mockup-screen-inner {
+      display: flex; flex-direction: column; height: 100%;
+    }
+    .mockup-header {
+      background: var(--surface);
+      padding: 16px 12px 10px;
+      border-bottom: 1px solid var(--border);
+    }
+    .mockup-title {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 800; font-size: 15px; color: var(--text);
+    }
+    .mockup-date { font-size: 9px; color: var(--text-3); margin-top: 1px; }
+    .mockup-body { padding: 10px; flex: 1; overflow: hidden; display: flex; flex-direction: column; gap: 8px; }
+    .mockup-ring-card {
+      background: var(--surface); border-radius: 12px; padding: 12px;
+      display: flex; align-items: center; gap: 10px; box-shadow: var(--shadow);
+    }
+    .mockup-ring {
+      width: 50px; height: 50px; flex-shrink: 0; border-radius: 50%;
+      background: conic-gradient(#22c55e 0% 68%, #e5e7eb 68% 100%);
+      display: flex; align-items: center; justify-content: center; position: relative;
+    }
+    .mockup-ring::after {
+      content: ''; position: absolute; width: 36px; height: 36px;
+      background: var(--surface); border-radius: 50%;
+    }
+    .mockup-ring-num {
+      position: relative; z-index: 1;
+      font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 10px; color: var(--green-600);
+    }
+    .mockup-ring-info { flex: 1; }
+    .mockup-ring-label { font-size: 8px; color: var(--text-3); font-weight: 600; }
+    .mockup-ring-val { font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 17px; color: var(--text); line-height: 1; }
+    .mockup-ring-sub { font-size: 8px; color: var(--text-3); margin-top: 1px; }
+    .mockup-meal {
+      background: var(--surface); border-radius: 10px; padding: 8px 10px;
+      box-shadow: var(--shadow); display: flex; align-items: center; justify-content: space-between;
+    }
+    .mockup-meal-left { display: flex; align-items: center; gap: 6px; }
+    .mockup-meal-icon {
+      width: 22px; height: 22px; border-radius: 6px; background: var(--green-50);
+      display: flex; align-items: center; justify-content: center; font-size: 11px;
+    }
+    .mockup-meal-name { font-size: 9px; font-weight: 600; color: var(--text); }
+    .mockup-meal-cal { font-size: 8px; color: var(--text-3); }
+    .mockup-meal-num { font-size: 10px; font-weight: 700; color: var(--green-600); }
+    .mockup-bars { background: var(--surface); border-radius: 10px; padding: 8px 10px; box-shadow: var(--shadow); }
+    .mockup-bar-row { margin-bottom: 5px; }
+    .mockup-bar-row:last-child { margin-bottom: 0; }
+    .mockup-bar-label { font-size: 8px; font-weight: 600; color: var(--text-3); display: flex; justify-content: space-between; margin-bottom: 2px; }
+    .mockup-bar-track { height: 4px; background: var(--border); border-radius: 99px; overflow: hidden; }
+    .mockup-bar-fill { height: 100%; border-radius: 99px; }
+    .mockup-phone-notch {
+      position: absolute; top: 10px; left: 50%; transform: translateX(-50%);
+      width: 60px; height: 6px; background: #111; border-radius: 0 0 6px 6px; z-index: 10;
+    }
+
+    @media (max-width: 700px) {
+      .devices-wrap { flex-direction: column; align-items: center; gap: 24px; }
+      .mockup-laptop { display: none; }
+      .mockup-phone { margin-left: 0; margin-bottom: 0; width: 240px; }
+      .mockup-screen { height: 460px; }
+    }
+
+    /* ── SECTION TITLE ── */
+    .section { padding: 64px 24px; }
+    .section-inner { max-width: 900px; margin: 0 auto; }
+    .section-label {
+      font-size: 12px; font-weight: 700; letter-spacing: 1.5px;
+      text-transform: uppercase; color: var(--green-600);
+      margin-bottom: 10px;
+    }
+    .section-title {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 800; font-size: clamp(26px, 5vw, 38px);
+      color: var(--text); margin-bottom: 12px; line-height: 1.2;
+    }
+    .section-sub {
+      font-size: 17px; color: var(--text-3); max-width: 520px; line-height: 1.6;
+    }
+
+    /* ── FEATURES ── */
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 16px;
+      margin-top: 40px;
+    }
+    .feature-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+      padding: 28px 24px;
+      box-shadow: var(--shadow);
+      transition: all 0.2s;
+    }
+    .feature-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+      border-color: var(--green-300);
+    }
+    .feature-icon {
+      width: 48px; height: 48px; border-radius: 14px;
+      background: var(--green-50); color: var(--green-600);
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 16px;
+    }
+    .feature-title {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 700; font-size: 17px;
+      color: var(--text); margin-bottom: 8px;
+    }
+    .feature-desc { font-size: 14px; color: var(--text-3); line-height: 1.6; }
+
+    /* ── HOW IT WORKS ── */
+    .how-bg { background: var(--green-900); color: white; }
+    .how-bg .section-label { color: var(--green-300); }
+    .how-bg .section-title { color: white; }
+    .how-bg .section-sub { color: rgba(255,255,255,0.6); }
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 32px;
+      margin-top: 48px;
+    }
+    .step { text-align: center; }
+    .step-num {
+      width: 52px; height: 52px; border-radius: 50%;
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.2);
+      font-family: 'Outfit', sans-serif;
+      font-weight: 800; font-size: 22px; color: var(--green-300);
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 16px;
+    }
+    .step-title {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 700; font-size: 16px;
+      color: white; margin-bottom: 8px;
+    }
+    .step-desc { font-size: 14px; color: rgba(255,255,255,0.55); line-height: 1.6; }
+
+    /* ── INSTALL ── */
+    .install-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 16px;
+      margin-top: 40px;
+    }
+    .install-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+      padding: 24px;
+      box-shadow: var(--shadow);
+    }
+    .install-os {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 700; font-size: 15px;
+      color: var(--text); margin-bottom: 14px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .install-steps { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+    .install-step {
+      display: flex; align-items: flex-start; gap: 10px;
+      font-size: 14px; color: var(--text-2); line-height: 1.5;
+    }
+    .install-step-num {
+      width: 22px; height: 22px; border-radius: 50%;
+      background: var(--green-50); color: var(--green-700);
+      font-size: 11px; font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; margin-top: 1px;
+    }
+
+    /* ── CTA SECTION ── */
+    .cta-section {
+      padding: 80px 24px;
+      text-align: center;
+      background: linear-gradient(135deg, var(--green-50) 0%, #fff 60%);
+      border-top: 1px solid var(--border);
+    }
+    .cta-section h2 {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 900; font-size: clamp(28px, 5vw, 44px);
+      color: var(--text); margin-bottom: 16px;
+      line-height: 1.15; letter-spacing: -0.5px;
+    }
+    .cta-section p {
+      font-size: 17px; color: var(--text-3);
+      max-width: 420px; margin: 0 auto 36px;
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      background: var(--text);
+      color: rgba(255,255,255,0.5);
+      padding: 32px 24px;
+      text-align: center;
+      font-size: 13px;
+    }
+    footer a { color: rgba(255,255,255,0.5); text-decoration: none; }
+    footer a:hover { color: white; }
+    .footer-logo {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 800; font-size: 18px;
+      color: white; margin-bottom: 8px;
+    }
+
+    /* ── DIVIDER ── */
+    .divider {
+      width: 48px; height: 3px;
+      background: var(--green-500);
+      border-radius: 99px;
+      margin: 16px 0;
+    }
+
+    @media (max-width: 600px) {
+      .hero { padding: 56px 20px 40px; }
+      .section { padding: 48px 20px; }
+      nav { padding: 0 16px; }
+      .mockup-phone { width: 240px; }
+      .mockup-screen { height: 440px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <a class="nav-logo" href="#">
+      <img src="../public/favicon.png" alt="NutriTrack" />
+      NutriTrack
+    </a>
+    <a class="nav-cta" href="https://forms.gle/whtLjRrUZKpDiCv48">Зареєструватися на тест</a>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-badge">
+      <span>🧪</span> Ранній доступ · Обмежена кількість місць
+    </div>
+    <h1>Рахуй калорії <em>без зусиль</em></h1>
+    <p>NutriTrack — простий трекер харчування, ваги та добавок. Працює прямо в браузері, встановлюється як додаток на телефон і комп'ютер.</p>
+    <div class="hero-btns">
+      <a class="btn-primary" href="https://forms.gle/whtLjRrUZKpDiCv48">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="13 17 18 12 13 7"/><polyline points="6 17 11 12 6 7"/></svg>
+        Зареєструватися на тест
+      </a>
+      <a class="btn-ghost" href="#features">Переваги</a>
+    </div>
+    <div class="hero-sub">
+      <div class="hero-sub-item">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+        Без реклами
+      </div>
+      <div class="hero-sub-item">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+        Дані у хмарі — доступні скрізь
+      </div>
+      <div class="hero-sub-item">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+        iOS, Android та десктоп
+      </div>
+    </div>
+  </section>
+
+  <!-- DEVICES MOCKUP -->
+  <div class="devices-wrap">
+
+    <!-- LAPTOP -->
+    <div class="mockup-laptop">
+      <div class="laptop-body">
+        <div class="laptop-screen">
+          <img src="screenshot-desktop.png" alt="NutriTrack desktop" class="laptop-screenshot"/>
+          <div class="ls-sidebar">
+            <div class="ls-logo"></div>
+            <div class="ls-dot active"></div>
+            <div class="ls-dot"></div>
+            <div class="ls-dot"></div>
+            <div class="ls-dot"></div>
+            <div class="ls-dot"></div>
+          </div>
+          <div class="ls-content">
+            <div class="ls-header">Сьогодні</div>
+            <div class="ls-row">
+              <div class="ls-card" style="flex:1.2">
+                <div class="ls-card-title">Калорії</div>
+                <div class="ls-ring-row">
+                  <div class="ls-ring"></div>
+                  <div>
+                    <div class="ls-ring-val">1 340</div>
+                    <div class="ls-ring-sub">залишок: 660 ккал</div>
+                  </div>
+                </div>
+              </div>
+              <div class="ls-card" style="flex:1">
+                <div class="ls-card-title">Макроси</div>
+                <div class="ls-bar-row">
+                  <div class="ls-bar-label"><span>Білки</span><span>72г</span></div>
+                  <div class="ls-bar-track"><div class="ls-bar-fill" style="width:60%;background:#3b82f6"></div></div>
+                </div>
+                <div class="ls-bar-row">
+                  <div class="ls-bar-label"><span>Жири</span><span>38г</span></div>
+                  <div class="ls-bar-track"><div class="ls-bar-fill" style="width:58%;background:#f97316"></div></div>
+                </div>
+                <div class="ls-bar-row">
+                  <div class="ls-bar-label"><span>Вуглеводи</span><span>140г</span></div>
+                  <div class="ls-bar-track"><div class="ls-bar-fill" style="width:56%;background:#eab308"></div></div>
+                </div>
+              </div>
+            </div>
+            <div class="ls-card">
+              <div class="ls-card-title">Прийоми їжі</div>
+              <div class="ls-meal"><span class="ls-meal-name">🍳 Сніданок</span><span class="ls-meal-cal">480 ккал</span></div>
+              <div class="ls-meal"><span class="ls-meal-name">🥗 Обід</span><span class="ls-meal-cal">620 ккал</span></div>
+              <div class="ls-meal"><span class="ls-meal-name">🍎 Перекус</span><span class="ls-meal-cal">240 ккал</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="laptop-base"></div>
+      <div class="laptop-stand"></div>
+    </div>
+
+    <!-- PHONE -->
+    <div class="mockup-phone">
+      <div class="mockup-phone-notch"></div>
+      <div class="mockup-screen">
+        <img src="screenshot-mobile.png" alt="NutriTrack mobile" class="phone-screenshot" />
+        <div class="mockup-screen-inner">
+          <div class="mockup-header">
+            <div class="mockup-title">Сьогодні</div>
+            <div class="mockup-date">п'ятниця, 21 лютого</div>
+          </div>
+          <div class="mockup-body">
+            <div class="mockup-ring-card">
+              <div class="mockup-ring">
+                <span class="mockup-ring-num">68%</span>
+              </div>
+              <div class="mockup-ring-info">
+                <div class="mockup-ring-label">СПОЖИТО</div>
+                <div class="mockup-ring-val">1 340</div>
+                <div class="mockup-ring-sub">залишок: 660 ккал</div>
+              </div>
+            </div>
+            <div class="mockup-bars">
+              <div class="mockup-bar-row">
+                <div class="mockup-bar-label"><span>Білки</span><span>72г / 120г</span></div>
+                <div class="mockup-bar-track"><div class="mockup-bar-fill" style="width:60%;background:#3b82f6"></div></div>
+              </div>
+              <div class="mockup-bar-row">
+                <div class="mockup-bar-label"><span>Жири</span><span>38г / 65г</span></div>
+                <div class="mockup-bar-track"><div class="mockup-bar-fill" style="width:58%;background:#f97316"></div></div>
+              </div>
+              <div class="mockup-bar-row">
+                <div class="mockup-bar-label"><span>Вуглеводи</span><span>140г / 250г</span></div>
+                <div class="mockup-bar-track"><div class="mockup-bar-fill" style="width:56%;background:#eab308"></div></div>
+              </div>
+            </div>
+            <div class="mockup-meal">
+              <div class="mockup-meal-left">
+                <div class="mockup-meal-icon">🍳</div>
+                <div>
+                  <div class="mockup-meal-name">Сніданок</div>
+                  <div class="mockup-meal-cal">Вівсянка, яйця</div>
+                </div>
+              </div>
+              <div class="mockup-meal-num">480 ккал</div>
+            </div>
+            <div class="mockup-meal">
+              <div class="mockup-meal-left">
+                <div class="mockup-meal-icon">🥗</div>
+                <div>
+                  <div class="mockup-meal-name">Обід</div>
+                  <div class="mockup-meal-cal">Салат, курка</div>
+                </div>
+              </div>
+              <div class="mockup-meal-num">620 ккал</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- FEATURES -->
+  <section class="section" id="features">
+    <div class="section-inner">
+      <div class="section-label">Переваги</div>
+      <h2 class="section-title">Все що потрібно — і нічого зайвого</h2>
+      <div class="divider"></div>
+      <p class="section-sub">Без складних таблиць і заплутаних меню. Записуєш за 2 хвилини — бачиш повну картину.</p>
+
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+          </div>
+          <div class="feature-title">Щоденний журнал</div>
+          <p class="feature-desc">Записуй прийоми їжі по категоріях — сніданок, обід, вечеря, перекус. Бачиш калорії і БЖВ за день.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12c.552 0 1.005-.449.95-.998a10 10 0 0 0-8.953-8.951c-.55-.055-.998.398-.998.95v8a1 1 0 0 0 1 1z"/><path d="M21.21 15.89A10 10 0 1 1 8 2.83"/></svg>
+          </div>
+          <div class="feature-title">Статистика за тиждень</div>
+          <p class="feature-desc">Графіки калорій і ваги, середні показники по макросах. Навігація по минулих тижнях.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/><path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"/><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"/></svg>
+          </div>
+          <div class="feature-title">AI-аналіз страв</div>
+          <p class="feature-desc">Опиши страву словами або вставки рецепт — AI розрахує калорії і макроси автоматично.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="m9 12 2 2 4-4"/></svg>
+          </div>
+          <div class="feature-title">Трекер добавок</div>
+          <p class="feature-desc">Додай вітаміни та добавки — відмічай щодня одним дотиком. Бачиш прогрес за тиждень у статистиці.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg>
+          </div>
+          <div class="feature-title">Динаміка ваги</div>
+          <p class="feature-desc">Записуй вагу щодня і стеж за трендом. Графік показує зміни за останній місяць.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="20" x="5" y="2" rx="2"/><path d="M15 2v4H9V2"/><path d="M9 12h6"/><path d="M9 16h4"/></svg>
+          </div>
+          <div class="feature-title">База продуктів</div>
+          <p class="feature-desc">Шукай в базі Open Food Facts або додавай свої продукти і страви. Збережи раз — використовуй завжди.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- HOW IT WORKS -->
+  <section class="section how-bg">
+    <div class="section-inner">
+      <div class="section-label">Як це працює</div>
+      <h2 class="section-title">Три кроки до результату</h2>
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">1</div>
+          <div class="step-title">Реєструєшся</div>
+          <p class="step-desc">Google-акаунт — один клік. Вводиш свої параметри і ціль, система розраховує норму калорій.</p>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <div class="step-title">Записуєш щодня</div>
+          <p class="step-desc">Додаєш їжу через пошук, AI або вручну. Займає 2-3 хвилини на день — входить у звичку.</p>
+        </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <div class="step-title">Бачиш прогрес</div>
+          <p class="step-desc">Статистика показує тренди по калоріях і вазі. Розумієш що працює — і робиш більше цього.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- INSTALL -->
+  <section class="section" id="install">
+    <div class="section-inner">
+      <div class="section-label">Встановлення</div>
+      <h2 class="section-title">Працює як додаток — без App Store</h2>
+      <div class="divider"></div>
+      <p class="section-sub">NutriTrack — це PWA. Встановлюється за 10 секунд прямо з браузера.</p>
+
+      <div class="install-grid">
+        <div class="install-card">
+          <div class="install-os">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
+            iPhone (Safari)
+          </div>
+          <ul class="install-steps">
+            <li class="install-step"><span class="install-step-num">1</span>Відкрий сайт у Safari</li>
+            <li class="install-step"><span class="install-step-num">2</span>Натисни кнопку "Поділитись" (квадрат зі стрілкою вгору)</li>
+            <li class="install-step"><span class="install-step-num">3</span>Обери "На екран Початку"</li>
+            <li class="install-step"><span class="install-step-num">4</span>Натисни "Додати" — готово!</li>
+          </ul>
+        </div>
+
+        <div class="install-card">
+          <div class="install-os">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M17.523 15.341c-.81.486-2.078.937-3.516.937-2.969 0-5.156-1.875-5.156-4.453 0-2.578 2.187-4.453 5.156-4.453 1.438 0 2.706.45 3.516.937l1.172-1.875C17.289 5.391 15.258 4.5 13.007 4.5c-4.297 0-7.5 2.953-7.5 7.125S8.71 18.75 13.007 18.75c2.25 0 4.281-.891 5.688-1.934l-1.172-1.875z"/><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"/></svg>
+            Android (Chrome)
+          </div>
+          <ul class="install-steps">
+            <li class="install-step"><span class="install-step-num">1</span>Відкрий сайт у Chrome</li>
+            <li class="install-step"><span class="install-step-num">2</span>Натисни три крапки у правому верхньому куті</li>
+            <li class="install-step"><span class="install-step-num">3</span>Обери "Додати на головний екран"</li>
+            <li class="install-step"><span class="install-step-num">4</span>Підтвердь — і додаток на екрані!</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="cta-section" id="start">
+    <h2>Хочеш спробувати<br>одним із перших?</h2>
+    <p>Реєструйся на ранній доступ — отримаєш додаток і зворотній зв'язок від команди.</p>
+    <a class="btn-primary" href="https://forms.gle/whtLjRrUZKpDiCv48" style="font-size:17px;padding:18px 40px;margin:0 auto;">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="13 17 18 12 13 7"/><polyline points="6 17 11 12 6 7"/></svg>
+      Зареєструватися на тест
+    </a>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div style="display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:8px;">
+      <img src="../public/favicon.png" alt="" style="width:24px;height:24px;border-radius:6px;opacity:0.85;" />
+      <div class="footer-logo" style="margin-bottom:0;">NutriTrack</div>
+    </div>
+    <p>Зроблено в Україні 🇺🇦</p>
+  </footer>
+
+</body>
+</html>
