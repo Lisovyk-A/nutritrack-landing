@@ -1,0 +1,1734 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NutriTrack — smart calorie tracker</title>
+  <meta name="description" content="NutriTrack — AI calorie, macros & weight tracker. Describe your meal in words — AI calculates everything. No ads. Cloud-synced data." />
+  <link rel="canonical" href="https://nutritrack-ochre.vercel.app" />
+  <link rel="icon" href="./favicon.png" />
+
+  <!-- OG / Social -->
+  <meta property="og:title" content="NutriTrack — AI calorie tracker" />
+  <meta property="og:description" content="Describe your meal in words — AI calculates the calories. No ads. Cloud-synced data." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://nutritrack-ochre.vercel.app" />
+  <meta property="og:image" content="./og-image.png" />
+  <meta name="twitter:card" content="summary_large_image" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap" rel="stylesheet" />
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --g50:  #f0fdf4;
+      --g100: #dcfce7;
+      --g200: #bbf7d0;
+      --g300: #86efac;
+      --g400: #4ade80;
+      --g500: #22c55e;
+      --g600: #16a34a;
+      --g700: #15803d;
+      --bg:   #080d0a;
+      --bg2:  #0d1410;
+      --bg3:  #111a14;
+      --surf: rgba(255,255,255,0.04);
+      --surf2:rgba(255,255,255,0.07);
+      --brd:  rgba(255,255,255,0.08);
+      --brd2: rgba(34,197,94,0.25);
+      --t1:   #f0fdf4;
+      --t2:   #a7c4b0;
+      --t3:   #5a7a64;
+      --r:    18px;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      color: var(--t1);
+      line-height: 1.6;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── CANVAS PARTICLES ── */
+    #particles-canvas {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      opacity: 0.45;
+    }
+
+    /* ── NOISE ── */
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 1;
+      opacity: 0.03;
+      background-image: url("image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      background-size: 200px;
+    }
+
+    /* ── GLOW BG ── */
+    .glow-orb {
+      position: fixed;
+      border-radius: 50%;
+      pointer-events: none;
+      filter: blur(120px);
+      z-index: 0;
+    }
+    .glow-orb-1 {
+      width: 600px; height: 600px;
+      top: -200px; left: -100px;
+      background: radial-gradient(circle, rgba(34,197,94,0.12) 0%, transparent 70%);
+    }
+    .glow-orb-2 {
+      width: 500px; height: 500px;
+      bottom: 10%; right: -100px;
+      background: radial-gradient(circle, rgba(34,197,94,0.08) 0%, transparent 70%);
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      padding: 0 40px;
+      display: flex; align-items: center; justify-content: space-between;
+      height: 68px;
+      transition: all 0.4s;
+    }
+    nav.scrolled {
+      background: rgba(8,13,10,0.8);
+      backdrop-filter: blur(24px) saturate(1.5);
+      -webkit-backdrop-filter: blur(24px) saturate(1.5);
+      border-bottom: 1px solid var(--brd);
+    }
+    .nav-logo {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 800; font-size: 20px;
+      color: var(--g400);
+      display: flex; align-items: center; gap: 10px;
+      text-decoration: none;
+      position: relative; z-index: 1;
+    }
+    .nav-logo img { width: 32px; height: 32px; border-radius: 9px; }
+    .nav-links {
+      display: flex; align-items: center; gap: 32px;
+      position: relative; z-index: 1;
+    }
+    .nav-link {
+      font-size: 14px; font-weight: 500; color: var(--t2);
+      text-decoration: none; transition: color 0.2s;
+    }
+    .nav-link:hover { color: var(--t1); }
+    .nav-cta {
+      background: var(--g500);
+      color: #000;
+      border: none; border-radius: 10px;
+      padding: 9px 22px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px; font-weight: 700;
+      cursor: pointer; text-decoration: none;
+      transition: all 0.2s;
+      box-shadow: 0 0 20px rgba(34,197,94,0.3);
+    }
+    .nav-cta:hover {
+      background: var(--g400);
+      box-shadow: 0 0 32px rgba(34,197,94,0.5);
+      transform: translateY(-1px);
+    }
+    .lang-toggle {
+      display: flex; align-items: center;
+      background: var(--surf2);
+      border: 1px solid var(--brd);
+      border-radius: 8px;
+      overflow: hidden;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px; font-weight: 600;
+    }
+    .lang-toggle a {
+      padding: 5px 10px;
+      color: var(--t3);
+      text-decoration: none;
+      transition: all 0.2s;
+      line-height: 1;
+    }
+    .lang-toggle a:hover { color: var(--t2); }
+    .lang-toggle a.active {
+      background: var(--g500);
+      color: #000;
+    }
+    @media (max-width: 700px) {
+      nav { padding: 0 20px; }
+      .nav-link { display: none; }
+    }
+
+    /* ── HERO ── */
+    .hero {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 60px;
+      align-items: center;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 120px 40px 80px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: rgba(34,197,94,0.1);
+      border: 1px solid rgba(34,197,94,0.25);
+      border-radius: 100px; padding: 6px 16px;
+      font-size: 12px; font-weight: 700;
+      color: var(--g400);
+      margin-bottom: 28px;
+      letter-spacing: 0.5px;
+    }
+    .badge-dot {
+      width: 7px; height: 7px; border-radius: 50%;
+      background: var(--g500);
+      animation: pulse-dot 2s infinite;
+    }
+    @keyframes pulse-dot {
+      0%,100% { box-shadow: 0 0 0 0 rgba(34,197,94,0.4); }
+      50%      { box-shadow: 0 0 0 6px rgba(34,197,94,0); }
+    }
+
+    .hero h1 {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 900;
+      font-size: clamp(40px, 5vw, 68px);
+      line-height: 1.02;
+      letter-spacing: -2.5px;
+      color: var(--t1);
+      margin-bottom: 24px;
+    }
+    .hero h1 .accent {
+      background: linear-gradient(135deg, var(--g400) 0%, var(--g500) 50%, #a3e635 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero-desc {
+      font-size: clamp(16px, 1.8vw, 18px);
+      color: var(--t2);
+      max-width: 440px;
+      margin-bottom: 40px;
+      line-height: 1.8;
+    }
+
+    .hero-btns {
+      display: flex; gap: 12px; flex-wrap: wrap;
+      margin-bottom: 48px;
+    }
+    .btn-primary {
+      background: var(--g500);
+      color: #000;
+      border: none; border-radius: 14px;
+      padding: 16px 32px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 15px; font-weight: 700;
+      cursor: pointer; text-decoration: none;
+      transition: all 0.25s cubic-bezier(0.16,1,0.3,1);
+      box-shadow: 0 4px 32px rgba(34,197,94,0.3);
+      display: inline-flex; align-items: center; gap: 8px;
+      position: relative; overflow: hidden;
+    }
+    .btn-primary::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: linear-gradient(135deg, rgba(255,255,255,0.2), transparent);
+      opacity: 0;
+      transition: opacity 0.25s;
+    }
+    .btn-primary:hover { transform: translateY(-3px); box-shadow: 0 12px 48px rgba(34,197,94,0.4); }
+    .btn-primary:hover::before { opacity: 1; }
+
+    .btn-ghost {
+      background: var(--surf);
+      color: var(--t2);
+      border: 1px solid var(--brd);
+      border-radius: 14px;
+      padding: 15px 28px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 15px; font-weight: 600;
+      cursor: pointer; text-decoration: none;
+      transition: all 0.25s;
+      backdrop-filter: blur(8px);
+    }
+    .btn-ghost:hover {
+      border-color: var(--brd2);
+      color: var(--t1);
+      background: rgba(34,197,94,0.07);
+    }
+
+    /* ── LIVE COUNTER ── */
+    .hero-live {
+      display: flex; align-items: center; gap: 20px;
+      flex-wrap: wrap;
+    }
+    .live-counter {
+      display: flex; align-items: center; gap: 12px;
+      background: var(--surf);
+      border: 1px solid var(--brd);
+      border-radius: 14px;
+      padding: 12px 20px;
+      backdrop-filter: blur(12px);
+    }
+    .live-counter-ring {
+      width: 40px; height: 40px;
+      position: relative; flex-shrink: 0;
+    }
+    .live-counter-ring svg {
+      transform: rotate(-90deg);
+      width: 40px; height: 40px;
+    }
+    .live-counter-ring circle {
+      fill: none;
+      stroke-width: 3;
+      stroke-linecap: round;
+    }
+    .ring-bg { stroke: rgba(34,197,94,0.15); }
+    .ring-fill {
+      stroke: var(--g500);
+      stroke-dasharray: 100;
+      stroke-dashoffset: 35;
+      transition: stroke-dashoffset 1.5s cubic-bezier(0.16,1,0.3,1);
+      filter: drop-shadow(0 0 4px rgba(34,197,94,0.6));
+    }
+    .live-counter-info {}
+    .live-counter-val {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 800; font-size: 18px;
+      color: var(--t1);
+      line-height: 1;
+    }
+    .live-counter-label {
+      font-size: 11px; color: var(--t3); font-weight: 500;
+      margin-top: 2px;
+    }
+    .live-pill {
+      display: flex; align-items: center; gap: 6px;
+      font-size: 12px; color: var(--t2); font-weight: 500;
+    }
+    .live-pill svg { color: var(--g500); }
+
+    /* ── HERO VISUAL ── */
+    .hero-visual {
+      display: flex; align-items: center; justify-content: center;
+      position: relative;
+      padding-top: 50px;
+    }
+    .tilt-wrapper {
+      width: 100%;
+      max-width: 480px;
+      transform-style: preserve-3d;
+      transition: transform 0.1s linear;
+      cursor: default;
+      position: relative;
+      z-index: 2;
+    }
+    .tilt-wrapper img {
+      width: 100%;
+      height: auto;
+      display: block;
+      filter: drop-shadow(0 40px 80px rgba(0,0,0,0.6)) drop-shadow(0 0 60px rgba(34,197,94,0.12));
+      border-radius: 0;
+    }
+    .hero-logo-anim {
+      position: absolute;
+      width: 340px;
+      height: 340px;
+      top: 50%;
+      left: 50%;
+      transform: translate(0%, -50%);
+      z-index: 0;
+      opacity: 0.9;
+      pointer-events: none;
+      filter: drop-shadow(0 0 18px rgba(34,197,94,0.7))
+              drop-shadow(0 0 48px rgba(34,197,94,0.35))
+              drop-shadow(0 0 90px rgba(34,197,94,0.15));
+    }
+    @media (max-width: 900px) {
+      .hero-logo-anim { width: 220px; height: 220px; }
+    }
+
+    /* floating badges */
+    .float-badge {
+      position: absolute;
+      background: rgba(13,20,16,0.9);
+      border: 1px solid var(--brd2);
+      border-radius: 12px;
+      padding: 10px 16px;
+      backdrop-filter: blur(16px);
+      display: flex; align-items: center; gap: 8px;
+      font-size: 12px; font-weight: 600; color: var(--t1);
+      white-space: nowrap;
+      z-index: 3;
+    }
+    .float-badge-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--g500); flex-shrink: 0; }
+    .float-badge-1 { top: 12%; left: -8%; animation: float1 6s ease-in-out infinite; }
+    .float-badge-2 { bottom: 18%; right: -6%; animation: float2 7s ease-in-out infinite; }
+    .float-badge-3 { top: 55%; left: -10%; animation: float3 5.5s ease-in-out infinite; }
+
+    @keyframes float1 { 0%,100%{transform:translateY(0px)} 50%{transform:translateY(-12px)} }
+    @keyframes float2 { 0%,100%{transform:translateY(0px)} 50%{transform:translateY(10px)} }
+    @keyframes float3 { 0%,100%{transform:translateY(0px)} 50%{transform:translateY(-8px)} }
+
+    @media (max-width: 900px) {
+      .hero {
+        grid-template-columns: 1fr;
+        padding: 110px 24px 60px;
+        text-align: center;
+        gap: 56px;
+      }
+      .hero-desc { margin-left: auto; margin-right: auto; }
+      .hero-btns { justify-content: center; }
+      .hero-live { justify-content: center; }
+      .tilt-wrapper { max-width: 340px; }
+      .float-badge-1 { left: 0; }
+      .float-badge-2 { right: 0; }
+      .float-badge-3 { display: none; }
+    }
+
+    /* ── REVEAL ── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(28px);
+      transition: opacity 0.7s cubic-bezier(0.16,1,0.3,1), transform 0.7s cubic-bezier(0.16,1,0.3,1);
+    }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+    .d1 { transition-delay: 0.08s; }
+    .d2 { transition-delay: 0.16s; }
+    .d3 { transition-delay: 0.24s; }
+    .d4 { transition-delay: 0.32s; }
+    .d5 { transition-delay: 0.40s; }
+
+    /* ── MARQUEE ── */
+    .marquee-section {
+      position: relative; z-index: 2;
+      padding: 32px 0;
+      overflow: hidden;
+      border-top: 1px solid var(--brd);
+      border-bottom: 1px solid var(--brd);
+    }
+    .marquee-track {
+      display: flex; gap: 48px;
+      width: max-content;
+      animation: marquee 22s linear infinite;
+    }
+    .marquee-track:hover { animation-play-state: paused; }
+    @keyframes marquee { from{transform:translateX(0)} to{transform:translateX(-50%)} }
+    .marquee-item {
+      display: flex; align-items: center; gap: 10px;
+      font-size: 14px; font-weight: 600;
+      color: var(--t3);
+      white-space: nowrap;
+    }
+    .marquee-item svg { color: var(--g600); flex-shrink: 0; }
+
+    /* ── SECTIONS ── */
+    .section {
+      padding: 100px 24px;
+      position: relative; z-index: 2;
+    }
+    .section-inner { max-width: 1080px; margin: 0 auto; }
+    .eyebrow {
+      font-size: 11px; font-weight: 800; letter-spacing: 3px;
+      text-transform: uppercase; color: var(--g500);
+      margin-bottom: 14px;
+      display: flex; align-items: center; gap: 10px;
+    }
+    .eyebrow::before {
+      content: '';
+      display: block;
+      width: 24px; height: 1.5px;
+      background: var(--g500);
+      border-radius: 2px;
+    }
+    .section-title {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 900;
+      font-size: clamp(28px, 4.5vw, 48px);
+      line-height: 1.08;
+      letter-spacing: -1.5px;
+      color: var(--t1);
+      margin-bottom: 16px;
+    }
+    .section-desc {
+      font-size: 17px; color: var(--t2); max-width: 480px; line-height: 1.8;
+    }
+
+    /* ── FEATURES BENTO ── */
+    .bento-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      grid-template-rows: auto auto;
+      gap: 16px;
+      margin-top: 56px;
+    }
+    .bento-card {
+      background: var(--surf);
+      border: 1px solid var(--brd);
+      border-radius: 20px;
+      padding: 32px 28px;
+      position: relative; overflow: hidden;
+      transition: all 0.4s cubic-bezier(0.16,1,0.3,1);
+      cursor: default;
+    }
+    .bento-card::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: radial-gradient(circle at 50% 0%, rgba(34,197,94,0.06) 0%, transparent 60%);
+      opacity: 0;
+      transition: opacity 0.4s;
+    }
+    .bento-card:hover {
+      border-color: var(--brd2);
+      transform: translateY(-4px);
+      box-shadow: 0 24px 64px rgba(0,0,0,0.4), 0 0 0 1px rgba(34,197,94,0.1);
+    }
+    .bento-card:hover::before { opacity: 1; }
+
+    /* wide card */
+    .bento-wide { grid-column: span 2; }
+
+    .bento-icon {
+      width: 48px; height: 48px; border-radius: 12px;
+      background: rgba(34,197,94,0.1);
+      color: var(--g500);
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 20px;
+      transition: all 0.35s cubic-bezier(0.16,1,0.3,1);
+    }
+    .bento-card:hover .bento-icon {
+      background: var(--g500);
+      color: #000;
+      box-shadow: 0 8px 24px rgba(34,197,94,0.35);
+      transform: scale(1.1) rotate(-4deg);
+    }
+    .bento-title {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 700; font-size: 17px;
+      color: var(--t1); margin-bottom: 8px;
+    }
+    .bento-desc { font-size: 14px; color: var(--t2); line-height: 1.75; }
+
+    /* AI card special — highlighted */
+    .bento-ai {
+      background: linear-gradient(135deg, rgba(34,197,94,0.1) 0%, rgba(34,197,94,0.04) 50%, rgba(34,197,94,0.08) 100%);
+      border-color: rgba(34,197,94,0.35);
+      position: relative;
+      box-shadow:
+        0 0 40px rgba(34,197,94,0.08),
+        0 0 80px rgba(34,197,94,0.04),
+        inset 0 1px 0 rgba(34,197,94,0.15);
+    }
+    .bento-ai::after {
+      content: '';
+      position: absolute;
+      inset: -1px;
+      border-radius: 21px;
+      padding: 1.5px;
+      background: linear-gradient(135deg, var(--g500), rgba(34,197,94,0.1) 30%, rgba(163,230,53,0.15) 70%, var(--g400));
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      pointer-events: none;
+      animation: ai-border-rotate 6s linear infinite;
+    }
+    @keyframes ai-border-rotate {
+      0%   { background: linear-gradient(0deg, var(--g500), rgba(34,197,94,0.05) 30%, rgba(163,230,53,0.15) 70%, var(--g400)); }
+      25%  { background: linear-gradient(90deg, var(--g500), rgba(34,197,94,0.05) 30%, rgba(163,230,53,0.15) 70%, var(--g400)); }
+      50%  { background: linear-gradient(180deg, var(--g500), rgba(34,197,94,0.05) 30%, rgba(163,230,53,0.15) 70%, var(--g400)); }
+      75%  { background: linear-gradient(270deg, var(--g500), rgba(34,197,94,0.05) 30%, rgba(163,230,53,0.15) 70%, var(--g400)); }
+      100% { background: linear-gradient(360deg, var(--g500), rgba(34,197,94,0.05) 30%, rgba(163,230,53,0.15) 70%, var(--g400)); }
+    }
+    .bento-ai:hover {
+      box-shadow:
+        0 0 60px rgba(34,197,94,0.15),
+        0 24px 64px rgba(0,0,0,0.4),
+        0 0 0 1px rgba(34,197,94,0.2),
+        inset 0 1px 0 rgba(34,197,94,0.2);
+    }
+    .ai-tag {
+      display: inline-flex; align-items: center; gap: 5px;
+      background: linear-gradient(135deg, rgba(34,197,94,0.25), rgba(163,230,53,0.15));
+      color: var(--g400);
+      font-size: 11px; font-weight: 800; letter-spacing: 1px;
+      text-transform: uppercase;
+      border-radius: 6px; padding: 4px 12px;
+      margin-bottom: 14px;
+      box-shadow: 0 0 16px rgba(34,197,94,0.2);
+      animation: ai-tag-pulse 3s ease-in-out infinite;
+    }
+    @keyframes ai-tag-pulse {
+      0%, 100% { box-shadow: 0 0 16px rgba(34,197,94,0.2); }
+      50% { box-shadow: 0 0 24px rgba(34,197,94,0.35); }
+    }
+
+    .bento-demo {
+      margin-top: 18px;
+      background: rgba(0,0,0,0.3);
+      border: 1px solid var(--brd);
+      border-radius: 12px;
+      padding: 14px 16px;
+      display: flex; align-items: center; gap: 10px;
+    }
+    .bento-demo-text { font-size: 13px; color: var(--t3); font-style: italic; flex: 1; }
+    .bento-demo-result {
+      font-family: 'Outfit', sans-serif;
+      font-size: 15px; font-weight: 800;
+      color: var(--g400);
+      white-space: nowrap;
+    }
+
+    @media (max-width: 768px) {
+      .bento-grid { grid-template-columns: 1fr; }
+      .bento-wide { grid-column: span 1; }
+    }
+
+    /* ── HOW IT WORKS ── */
+    .how-section { background: var(--bg2); }
+    .steps-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0;
+      margin-top: 64px;
+      position: relative;
+    }
+    .steps-row::after {
+      content: '';
+      position: absolute;
+      top: 32px; left: 15%; right: 15%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--brd2), var(--brd2), transparent);
+    }
+    .step {
+      text-align: center;
+      padding: 0 28px;
+      position: relative; z-index: 1;
+    }
+    .step-num-wrap {
+      width: 64px; height: 64px;
+      border-radius: 50%;
+      border: 1px solid var(--brd2);
+      background: var(--bg);
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 28px;
+      transition: all 0.4s cubic-bezier(0.16,1,0.3,1);
+      position: relative;
+    }
+    .step:hover .step-num-wrap {
+      background: rgba(34,197,94,0.1);
+      border-color: var(--g500);
+      box-shadow: 0 0 32px rgba(34,197,94,0.2);
+      transform: scale(1.1);
+    }
+    .step-num {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 900; font-size: 22px;
+      color: var(--g500);
+    }
+    .step-title {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 700; font-size: 18px;
+      color: var(--t1); margin-bottom: 10px;
+    }
+    .step-desc { font-size: 14px; color: var(--t2); line-height: 1.75; }
+    @media (max-width: 700px) {
+      .steps-row { grid-template-columns: 1fr; gap: 48px; }
+      .steps-row::after { display: none; }
+    }
+
+    /* ── STATS ── */
+    .stats-section { background: var(--bg3); }
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-top: 56px;
+    }
+    .stat-card {
+      background: var(--surf);
+      border: 1px solid var(--brd);
+      border-radius: 20px;
+      padding: 36px 28px;
+      text-align: center;
+      transition: all 0.35s cubic-bezier(0.16,1,0.3,1);
+      position: relative; overflow: hidden;
+    }
+    .stat-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 50%; transform: translateX(-50%);
+      width: 60%; height: 1px;
+      background: linear-gradient(90deg, transparent, var(--g500), transparent);
+      opacity: 0;
+      transition: opacity 0.35s;
+    }
+    .stat-card:hover { transform: translateY(-4px); border-color: var(--brd2); }
+    .stat-card:hover::before { opacity: 1; }
+    .stat-num {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 900; font-size: 52px;
+      line-height: 1;
+      background: linear-gradient(135deg, var(--g400), var(--g500));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 10px;
+    }
+    .stat-label { font-size: 15px; color: var(--t2); font-weight: 500; }
+    @media (max-width: 700px) {
+      .stats-grid { grid-template-columns: 1fr 1fr; }
+    }
+
+    /* ── PLATFORM CARDS ── */
+    .platform-cards {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-top: 56px;
+    }
+    .platform-card {
+      background: var(--surf);
+      border: 1px solid var(--brd);
+      border-radius: 20px;
+      padding: 28px 24px;
+      position: relative; overflow: hidden;
+      transition: all 0.35s cubic-bezier(0.16,1,0.3,1);
+    }
+    .platform-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 24px 56px rgba(0,0,0,0.4);
+    }
+    .platform-ready {
+      border-color: rgba(34,197,94,0.15);
+    }
+    .platform-ready:hover {
+      border-color: rgba(34,197,94,0.35);
+    }
+    .platform-wip {
+      border-color: rgba(251,191,36,0.15);
+      background: rgba(251,191,36,0.03);
+    }
+    .platform-wip:hover {
+      border-color: rgba(251,191,36,0.3);
+    }
+    .platform-status {
+      display: flex; align-items: center; gap: 7px;
+      font-size: 11px; font-weight: 700;
+      letter-spacing: 0.5px;
+      margin-bottom: 20px;
+    }
+    .status-dot {
+      width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0;
+    }
+    .status-live {
+      background: var(--g500);
+      box-shadow: 0 0 0 3px rgba(34,197,94,0.2);
+      animation: pulse-dot 2s infinite;
+    }
+    .platform-ready .platform-status { color: var(--g400); }
+    .status-wip {
+      background: #fbbf24;
+      box-shadow: 0 0 0 3px rgba(251,191,36,0.2);
+    }
+    .platform-wip .platform-status { color: #fbbf24; }
+    .platform-icon {
+      width: 52px; height: 52px; border-radius: 14px;
+      background: rgba(34,197,94,0.1);
+      color: var(--g500);
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 16px;
+      transition: all 0.3s;
+    }
+    .platform-icon-muted {
+      background: rgba(251,191,36,0.08);
+      color: #fbbf24;
+    }
+    .platform-card:hover .platform-icon:not(.platform-icon-muted) {
+      background: var(--g500);
+      color: #000;
+    }
+    .platform-name {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 700; font-size: 17px;
+      color: var(--t1); margin-bottom: 8px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .wip-badge {
+      font-size: 10px; font-weight: 800; letter-spacing: 0.5px;
+      background: rgba(251,191,36,0.15); color: #fbbf24;
+      border-radius: 5px; padding: 2px 7px;
+    }
+    .platform-desc {
+      font-size: 13px; color: var(--t2); line-height: 1.7;
+      margin-bottom: 18px;
+    }
+    .platform-steps { display: flex; flex-direction: column; gap: 8px; }
+    .pstep {
+      display: flex; align-items: center; gap: 10px;
+      font-size: 12px; color: var(--t2);
+    }
+    .pstep-n {
+      width: 20px; height: 20px; border-radius: 50%;
+      background: rgba(34,197,94,0.1); color: var(--g500);
+      font-size: 10px; font-weight: 800;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .platform-features { display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px; }
+    .wip-feature {
+      display: flex; align-items: center; gap: 8px;
+      font-size: 12px; color: rgba(251,191,36,0.7);
+    }
+    .wip-feature svg { flex-shrink: 0; color: #fbbf24; }
+    .wip-notify { margin-top: 4px; }
+    .wip-notify-btn {
+      display: inline-block;
+      background: rgba(251,191,36,0.1);
+      border: 1px solid rgba(251,191,36,0.25);
+      color: #fbbf24;
+      font-size: 12px; font-weight: 700;
+      border-radius: 8px; padding: 8px 14px;
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+    .wip-notify-btn:hover {
+      background: rgba(251,191,36,0.18);
+      border-color: rgba(251,191,36,0.5);
+    }
+    @media (max-width: 900px) {
+      .platform-cards { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 560px) {
+      .platform-cards { grid-template-columns: 1fr; }
+    }
+
+    /* ── INSTALL ── */
+    .install-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+      margin-top: 56px;
+    }
+    .install-card {
+      background: var(--surf);
+      border: 1px solid var(--brd);
+      border-radius: 20px;
+      padding: 36px 32px;
+      transition: all 0.35s cubic-bezier(0.16,1,0.3,1);
+      position: relative; overflow: hidden;
+    }
+    .install-card::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0; right: 0; height: 3px;
+      background: linear-gradient(90deg, var(--g600), var(--g500), var(--g400));
+      opacity: 0;
+      transition: opacity 0.35s;
+    }
+    .install-card:hover {
+      border-color: var(--brd2);
+      transform: translateY(-4px);
+      box-shadow: 0 24px 56px rgba(0,0,0,0.4);
+    }
+    .install-card:hover::after { opacity: 1; }
+
+    .install-os {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 700; font-size: 17px;
+      color: var(--t1); margin-bottom: 28px;
+      display: flex; align-items: center; gap: 12px;
+    }
+    .install-os-icon {
+      width: 44px; height: 44px; border-radius: 12px;
+      background: rgba(34,197,94,0.1); color: var(--g500);
+      display: flex; align-items: center; justify-content: center;
+      transition: all 0.3s;
+    }
+    .install-card:hover .install-os-icon {
+      background: var(--g500);
+      color: #000;
+    }
+    .install-steps { list-style: none; display: flex; flex-direction: column; gap: 14px; }
+    .install-step {
+      display: flex; align-items: flex-start; gap: 12px;
+      font-size: 14px; color: var(--t2); line-height: 1.65;
+    }
+    .install-step-num {
+      width: 24px; height: 24px; border-radius: 50%;
+      background: rgba(34,197,94,0.1); color: var(--g500);
+      font-size: 11px; font-weight: 800;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; margin-top: 1px;
+    }
+    @media (max-width: 700px) { .install-grid { grid-template-columns: 1fr; } }
+
+    /* ── AUTHOR VIDEO ── */
+    .author-section {
+      padding: 120px 24px;
+      position: relative;
+      z-index: 2;
+      overflow: hidden;
+    }
+    .author-section::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 80% 50% at 50% 40%, rgba(34,197,94,0.06) 0%, transparent 70%),
+        linear-gradient(180deg, transparent 0%, rgba(34,197,94,0.03) 30%, rgba(34,197,94,0.03) 70%, transparent 100%);
+      pointer-events: none;
+    }
+    .author-inner {
+      max-width: 860px;
+      margin: 0 auto;
+      position: relative;
+    }
+    .author-header {
+      text-align: center;
+      margin-bottom: 48px;
+    }
+    .author-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--g500);
+      margin-bottom: 18px;
+    }
+    .author-label::before,
+    .author-label::after {
+      content: '';
+      display: block;
+      width: 28px;
+      height: 1.5px;
+      background: linear-gradient(90deg, var(--g500), transparent);
+      border-radius: 2px;
+    }
+    .author-label::after {
+      background: linear-gradient(90deg, transparent, var(--g500));
+    }
+    .author-heading {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 800;
+      font-size: clamp(24px, 4vw, 38px);
+      line-height: 1.2;
+      color: var(--t1);
+      letter-spacing: -1px;
+    }
+    .author-heading em {
+      font-style: normal;
+      background: linear-gradient(135deg, var(--g400), var(--g500));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    /* video cinema frame */
+    .author-cinema {
+      position: relative;
+    }
+    .author-video-glow {
+      position: absolute;
+      width: 600px;
+      height: 400px;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: radial-gradient(circle, rgba(34,197,94,0.14) 0%, transparent 65%);
+      pointer-events: none;
+      z-index: 0;
+    }
+    .author-video-wrap {
+      position: relative;
+      border-radius: 20px;
+      overflow: hidden;
+      aspect-ratio: 16/9;
+      background: #000;
+      cursor: pointer;
+      z-index: 1;
+      border: 1.5px solid rgba(34,197,94,0.25);
+      box-shadow:
+        0 0 0 1px rgba(34,197,94,0.08),
+        0 0 60px rgba(34,197,94,0.07),
+        0 30px 80px rgba(0,0,0,0.5);
+      transition: box-shadow 0.4s, transform 0.4s cubic-bezier(0.16,1,0.3,1);
+    }
+    .author-video-wrap:hover {
+      box-shadow:
+        0 0 0 1px rgba(34,197,94,0.15),
+        0 0 80px rgba(34,197,94,0.12),
+        0 40px 100px rgba(0,0,0,0.6);
+      transform: translateY(-4px);
+    }
+    .author-video-wrap video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    /* gradient border */
+    .author-video-wrap::before {
+      content: '';
+      position: absolute;
+      inset: -1.5px;
+      border-radius: 21px;
+      padding: 1.5px;
+      background: linear-gradient(160deg, var(--g500), rgba(34,197,94,0.08) 35%, transparent 50%, rgba(34,197,94,0.08) 65%, var(--g400));
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      pointer-events: none;
+      z-index: 4;
+    }
+
+    /* custom play overlay */
+    .author-play-overlay {
+      position: absolute;
+      inset: 0;
+      z-index: 3;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 18px;
+      background: linear-gradient(180deg, rgba(0,0,0,0.05) 0%, rgba(0,0,0,0.25) 100%);
+      transition: opacity 0.5s cubic-bezier(0.16,1,0.3,1);
+      cursor: pointer;
+    }
+    .author-play-overlay.is-hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+    .author-play-btn {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background: rgba(34,197,94,0.15);
+      border: 2px solid rgba(34,197,94,0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      transition: all 0.35s cubic-bezier(0.16,1,0.3,1);
+      position: relative;
+    }
+    .author-play-btn::before {
+      content: '';
+      position: absolute;
+      inset: -8px;
+      border-radius: 50%;
+      border: 1px solid rgba(34,197,94,0.15);
+      animation: play-ring-pulse 2.5s ease-in-out infinite;
+    }
+    @keyframes play-ring-pulse {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.15); opacity: 0; }
+    }
+    .author-play-btn svg {
+      color: var(--g400);
+      margin-left: 4px;
+      filter: drop-shadow(0 0 8px rgba(34,197,94,0.5));
+    }
+    .author-video-wrap:hover .author-play-btn {
+      background: rgba(34,197,94,0.25);
+      border-color: var(--g400);
+      transform: scale(1.08);
+      box-shadow: 0 0 40px rgba(34,197,94,0.3);
+    }
+    .author-play-label {
+      font-size: 13px;
+      font-weight: 700;
+      color: rgba(255,255,255,0.8);
+      letter-spacing: 0.5px;
+    }
+    .author-play-duration {
+      font-size: 11px;
+      color: rgba(255,255,255,0.4);
+      font-weight: 500;
+    }
+
+    /* decorative corner marks */
+    .author-corner {
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      z-index: 5;
+      pointer-events: none;
+    }
+    .author-corner::before,
+    .author-corner::after {
+      content: '';
+      position: absolute;
+      background: rgba(34,197,94,0.5);
+      border-radius: 1px;
+    }
+    .author-corner--tl { top: 12px; left: 12px; }
+    .author-corner--tl::before { width: 20px; height: 1.5px; top: 0; left: 0; }
+    .author-corner--tl::after  { width: 1.5px; height: 20px; top: 0; left: 0; }
+    .author-corner--tr { top: 12px; right: 12px; }
+    .author-corner--tr::before { width: 20px; height: 1.5px; top: 0; right: 0; }
+    .author-corner--tr::after  { width: 1.5px; height: 20px; top: 0; right: 0; }
+    .author-corner--bl { bottom: 12px; left: 12px; }
+    .author-corner--bl::before { width: 20px; height: 1.5px; bottom: 0; left: 0; }
+    .author-corner--bl::after  { width: 1.5px; height: 20px; bottom: 0; left: 0; }
+    .author-corner--br { bottom: 12px; right: 12px; }
+    .author-corner--br::before { width: 20px; height: 1.5px; bottom: 0; right: 0; }
+    .author-corner--br::after  { width: 1.5px; height: 20px; bottom: 0; right: 0; }
+
+    /* bottom info */
+    .author-bottom {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 40px;
+      margin-top: 40px;
+      flex-wrap: wrap;
+    }
+    .author-quote-block {
+      flex: 1;
+      min-width: 280px;
+      max-width: 480px;
+      position: relative;
+      padding-left: 20px;
+    }
+    .author-quote-block::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 4px;
+      bottom: 4px;
+      width: 3px;
+      border-radius: 3px;
+      background: linear-gradient(180deg, var(--g500), var(--g400));
+      box-shadow: 0 0 12px rgba(34,197,94,0.3);
+    }
+    .author-quote {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 600;
+      font-size: clamp(17px, 2.2vw, 21px);
+      line-height: 1.55;
+      color: var(--t1);
+      letter-spacing: -0.3px;
+    }
+    .author-quote em {
+      font-style: normal;
+      background: linear-gradient(135deg, var(--g400), var(--g500));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .author-info {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      flex-shrink: 0;
+    }
+    .author-avatar {
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, rgba(34,197,94,0.2), rgba(34,197,94,0.05));
+      border: 1.5px solid rgba(34,197,94,0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Outfit', sans-serif;
+      font-weight: 800;
+      font-size: 20px;
+      color: var(--g400);
+    }
+    .author-meta {}
+    .author-name {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 700;
+      font-size: 16px;
+      color: var(--t1);
+      line-height: 1.2;
+    }
+    .author-role {
+      font-size: 13px;
+      color: var(--t3);
+      font-weight: 500;
+      margin-top: 2px;
+    }
+    @media (max-width: 700px) {
+      .author-bottom { flex-direction: column; gap: 28px; align-items: flex-start; }
+      .author-play-btn { width: 64px; height: 64px; }
+      .author-play-btn svg { width: 22px; height: 22px; }
+    }
+
+    /* ── CTA ── */
+    .cta-section {
+      padding: 140px 24px;
+      text-align: center;
+      position: relative; z-index: 2;
+      overflow: hidden;
+    }
+    .cta-glow {
+      position: absolute;
+      width: 600px; height: 400px;
+      left: 50%; top: 50%;
+      transform: translate(-50%, -50%);
+      background: radial-gradient(ellipse, rgba(34,197,94,0.1) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .cta-section > * { position: relative; z-index: 1; }
+    .cta-section h2 {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 900;
+      font-size: clamp(32px, 6vw, 56px);
+      line-height: 1.08;
+      letter-spacing: -2px;
+      color: var(--t1);
+      margin-bottom: 20px;
+    }
+    .cta-section p {
+      font-size: 17px; color: var(--t2);
+      max-width: 440px; margin: 0 auto 44px;
+      line-height: 1.8;
+    }
+    .cta-pills {
+      display: flex; align-items: center; justify-content: center;
+      gap: 20px; flex-wrap: wrap;
+      margin-top: 36px;
+      font-size: 13px; color: var(--t3); font-weight: 500;
+    }
+    .cta-pill {
+      display: flex; align-items: center; gap: 6px;
+    }
+    .cta-pill svg { color: var(--g500); }
+
+    /* ── FOOTER ── */
+    footer {
+      background: rgba(0,0,0,0.4);
+      border-top: 1px solid var(--brd);
+      color: var(--t3);
+      padding: 40px 24px;
+      text-align: center;
+      font-size: 13px;
+      position: relative; z-index: 2;
+    }
+    .footer-inner {
+      display: flex; align-items: center; justify-content: center;
+      gap: 8px; margin-bottom: 10px;
+    }
+    .footer-inner img { width: 24px; height: 24px; border-radius: 6px; opacity: 0.7; }
+    .footer-brand {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 800; font-size: 16px;
+      color: rgba(255,255,255,0.5);
+    }
+
+    @media (max-width: 600px) {
+      .section { padding: 72px 20px; }
+      .stats-grid { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- PARTICLES -->
+  <canvas id="particles-canvas"></canvas>
+  <div class="glow-orb glow-orb-1"></div>
+  <div class="glow-orb glow-orb-2"></div>
+
+  <!-- NAV -->
+  <nav id="nav">
+    <a class="nav-logo" href="#">
+      <img src="./favicon.png" alt="NutriTrack" />
+      NutriTrack
+    </a>
+    <div class="nav-links">
+      <a class="nav-link" href="#features">Features</a>
+      <a class="nav-link" href="#how">How it works</a>
+      <a class="nav-link" href="#install">Install</a>
+      <div class="lang-toggle">
+        <a href="./index.html">UA</a>
+        <a href="./en.html" class="active">EN</a>
+      </div>
+      <a class="nav-cta" href="https://nutritrack-ochre.vercel.app">Account →</a>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-content">
+      <div class="hero-badge reveal">
+        <span class="badge-dot"></span>
+        Early access · Free
+      </div>
+
+      <h1 class="reveal d1">
+        Eat mindfully.<br>
+        Achieve <span class="accent">results.</span>
+      </h1>
+
+      <p class="hero-desc reveal d2">
+        An AI tracker that understands you. Describe your meal in plain words — NutriTrack instantly calculates calories and macros. No spreadsheets, no hassle.
+      </p>
+
+      <div class="hero-btns reveal d3">
+        <a class="btn-primary" href="https://nutritrack-ochre.vercel.app">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+          Start losing weight
+        </a>
+        <a class="btn-ghost" href="#features">Learn more</a>
+      </div>
+
+      <div class="hero-live reveal d4">
+        <div class="live-counter">
+          <div class="live-counter-ring">
+            <svg viewBox="0 0 36 36">
+              <circle class="ring-bg" cx="18" cy="18" r="15" stroke-dasharray="94.2" stroke-dashoffset="0"/>
+              <circle class="ring-fill" cx="18" cy="18" r="15" stroke-dasharray="94.2" id="ring-progress"/>
+            </svg>
+          </div>
+          <div class="live-counter-info">
+            <div class="live-counter-val" id="cal-counter">1,420</div>
+            <div class="live-counter-label">kcal today</div>
+          </div>
+        </div>
+        <div class="live-pill">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+          No ads
+        </div>
+        <div class="live-pill">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+          iOS · Android · Web
+        </div>
+      </div>
+    </div>
+
+    <div class="hero-visual reveal d2">
+      <img class="hero-logo-anim" src="./logoanim.svg" alt="" />
+      <div class="tilt-wrapper" id="tilt">
+        <img src="./hero-mockup.png" alt="NutriTrack app" />
+
+        <div class="float-badge float-badge-1">
+          <span class="float-badge-dot"></span>
+          AI calculated in 1 sec
+        </div>
+        <div class="float-badge float-badge-2">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg>
+          −1.2 kg per month
+        </div>
+        <div class="float-badge float-badge-3">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>
+          Daily goal reached
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MARQUEE -->
+  <div class="marquee-section">
+    <div class="marquee-track" id="marquee">
+      <span class="marquee-item"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg> AI meal analysis</span>
+      <span class="marquee-item"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg> Calorie chart</span>
+      <span class="marquee-item"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg> Weight dynamics</span>
+      <span class="marquee-item"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><rect width="14" height="20" x="5" y="2" rx="2"/><path d="M9 12h6"/><path d="M9 16h4"/></svg> Food database</span>
+      <span class="marquee-item"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="m9 12 2 2 4-4"/></svg> Supplement tracker</span>
+      <span class="marquee-item"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3z"/></svg> iOS Widget</span>
+      <span class="marquee-item"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M18 20V10"/><path d="M12 20V4"/><path d="M6 20v-6"/></svg> Macros stats</span>
+      <span class="marquee-item"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg> Google Auth</span>
+      <!-- duplicate for seamless loop -->
+      <span class="marquee-item"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg> AI meal analysis</span>
+      <span class="marquee-item"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg> Calorie chart</span>
+      <span class="marquee-item"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg> Weight dynamics</span>
+      <span class="marquee-item"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><rect width="14" height="20" x="5" y="2" rx="2"/><path d="M9 12h6"/><path d="M9 16h4"/></svg> Food database</span>
+      <span class="marquee-item"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="m9 12 2 2 4-4"/></svg> Supplement tracker</span>
+      <span class="marquee-item"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3z"/></svg> iOS Widget</span>
+      <span class="marquee-item"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M18 20V10"/><path d="M12 20V4"/><path d="M6 20v-6"/></svg> Macros stats</span>
+      <span class="marquee-item"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg> Google Auth</span>
+    </div>
+  </div>
+
+  <!-- FEATURES -->
+  <section class="section" id="features">
+    <div class="section-inner">
+      <div class="eyebrow reveal">Features</div>
+      <h2 class="section-title reveal d1">Solves real problems<br>— not made-up ones</h2>
+      <p class="section-desc reveal d2">We built the app for those who have tried counting calories before and gave up. Because it was too complicated.</p>
+
+      <div class="bento-grid">
+
+        <div class="bento-card bento-ai reveal">
+          <div class="ai-tag">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3z"/></svg>
+            AI
+          </div>
+          <div class="bento-title">AI nutritionist counts for you</div>
+          <p class="bento-desc">Weigh your food, message the nutritionist and get calories in a second. Just describe what you ate — AI calculates all nutrients instantly.</p>
+          <div class="bento-demo">
+            <span class="bento-demo-text">"Buckwheat 200g, cucumber & tomato salad 250g"</span>
+            <span class="bento-demo-result">387 kcal →</span>
+          </div>
+        </div>
+
+        <div class="bento-card reveal d1">
+          <div class="bento-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+          </div>
+          <div class="bento-title">"I barely ate anything..."</div>
+          <p class="bento-desc">Feel like you eat little but the scale won't budge? A daily journal reveals the real picture — where extra calories hide.</p>
+        </div>
+
+        <div class="bento-card reveal d1">
+          <div class="bento-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg>
+          </div>
+          <div class="bento-title">Finally see real results</div>
+          <p class="bento-desc">Don't trust feelings — trust the chart. Monthly weight dynamics show the real trend and keep you motivated.</p>
+        </div>
+
+        <div class="bento-card bento-wide reveal d2">
+          <div class="bento-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"><path d="M21 12c.552 0 1.005-.449.95-.998a10 10 0 0 0-8.953-8.951c-.55-.055-.998.398-.998.95v8a1 1 0 0 0 1 1z"/><path d="M21.21 15.89A10 10 0 1 1 8 2.83"/></svg>
+          </div>
+          <div class="bento-title">Understand why the weight won't go</div>
+          <p class="bento-desc">Weekly calorie and macro stats answer the key question: "where do I slip up?" See the patterns — fix the habits. Not with guesses, but with data.</p>
+        </div>
+
+        <div class="bento-card reveal d2">
+          <div class="bento-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="m9 12 2 2 4-4"/></svg>
+          </div>
+          <div class="bento-title">Forgetting your vitamins?</div>
+          <p class="bento-desc">The supplement tracker reminds and records. One tap — and the streak continues. Never miss again.</p>
+        </div>
+
+        <div class="bento-card reveal d3">
+          <div class="bento-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"><rect width="14" height="20" x="5" y="2" rx="2"/><path d="M15 2v4H9V2"/><path d="M9 12h6"/><path d="M9 16h4"/></svg>
+          </div>
+          <div class="bento-title">Don't search for the same thing twice</div>
+          <p class="bento-desc">Save your meals once — and add them in one tap. Your personal food database is always at hand.</p>
+        </div>
+
+        <div class="bento-card reveal d3">
+          <div class="bento-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="M12 8v4"/><path d="M12 16h.01"/></svg>
+          </div>
+          <div class="bento-title">Eat what you want — and lose weight</div>
+          <p class="bento-desc">No diets needed. Just understand your daily norm. When you see the numbers — you naturally start making better choices.</p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- INSTALL -->
+  <section class="section" id="install">
+    <div class="section-inner">
+      <div class="eyebrow reveal">Availability</div>
+      <h2 class="section-title reveal d1">Available on<br>all platforms</h2>
+      <p class="section-desc reveal d2">The web version is ready — open it right now. A native iOS app is in development.</p>
+
+      <!-- STATUS CARDS -->
+      <div class="platform-cards">
+
+        <div class="platform-card platform-ready reveal d1">
+          <div class="platform-status">
+            <span class="status-dot status-live"></span>
+            Available now
+          </div>
+          <div class="platform-icon">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
+          </div>
+          <div class="platform-name">iPhone</div>
+          <div class="platform-desc">Web app via Safari.<br>Installs to home screen like a native app.</div>
+          <div class="platform-steps">
+            <div class="pstep"><span class="pstep-n">1</span> Safari → "Share"</div>
+            <div class="pstep"><span class="pstep-n">2</span> "Add to Home Screen"</div>
+            <div class="pstep"><span class="pstep-n">3</span> Done in 10 seconds</div>
+          </div>
+        </div>
+
+        <div class="platform-card platform-ready reveal d2">
+          <div class="platform-status">
+            <span class="status-dot status-live"></span>
+            Available now
+          </div>
+          <div class="platform-icon">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor"><path d="M17.523 15.341 14.06 12l3.463-3.341A.75.75 0 0 0 16.99 7.5H7.01a.75.75 0 0 0-.533 1.159L9.94 12l-3.463 3.341A.75.75 0 0 0 7.01 16.5h9.98a.75.75 0 0 0 .533-1.159z"/></svg>
+          </div>
+          <div class="platform-name">Android</div>
+          <div class="platform-desc">Web app via Chrome.<br>Full experience without the App Store.</div>
+          <div class="platform-steps">
+            <div class="pstep"><span class="pstep-n">1</span> Chrome → menu ⋮</div>
+            <div class="pstep"><span class="pstep-n">2</span> "Add to Home Screen"</div>
+            <div class="pstep"><span class="pstep-n">3</span> Confirm — and you're set!</div>
+          </div>
+        </div>
+
+        <div class="platform-card platform-ready reveal d3">
+          <div class="platform-status">
+            <span class="status-dot status-live"></span>
+            Available now
+          </div>
+          <div class="platform-icon">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"><rect x="2" y="4" width="20" height="14" rx="2"/><path d="M8 20h8M12 18v2"/></svg>
+          </div>
+          <div class="platform-name">Desktop</div>
+          <div class="platform-desc">Open in any browser.<br>Full version on the big screen.</div>
+          <div class="platform-steps">
+            <div class="pstep"><span class="pstep-n">✓</span> Just open the link</div>
+            <div class="pstep"><span class="pstep-n">✓</span> Sign in with Google</div>
+            <div class="pstep"><span class="pstep-n">✓</span> No installation needed</div>
+          </div>
+        </div>
+
+        <div class="platform-card platform-wip reveal d4">
+          <div class="platform-status">
+            <span class="status-dot status-wip"></span>
+            In development
+          </div>
+          <div class="platform-icon platform-icon-muted">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
+          </div>
+          <div class="platform-name">iOS Native <span class="wip-badge">SwiftUI</span></div>
+          <div class="platform-desc">Native App Store app built with Swift.<br>Faster, with Live Activity and Widgets.</div>
+          <div class="platform-features">
+            <div class="wip-feature"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3z"/></svg> Lock Screen Widget</div>
+            <div class="wip-feature"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg> Live Activity</div>
+            <div class="wip-feature"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.99 12a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.92 1.2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 8.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg> Siri Shortcuts</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- AUTHOR VIDEO -->
+  <section class="author-section">
+    <div class="author-inner">
+
+      <div class="author-header reveal">
+        <div class="author-label">From the author</div>
+        <div class="author-heading">Why I created <em>NutriTrack</em></div>
+      </div>
+
+      <div class="author-cinema reveal d1">
+        <div class="author-video-glow"></div>
+        <div class="author-video-wrap" id="author-video-wrap">
+          <video id="author-video" src="./videoen.mp4#t=1" playsinline preload="auto"></video>
+          <div class="author-play-overlay" id="author-play-overlay">
+            <div class="author-play-btn">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5.14v14.72a1 1 0 0 0 1.5.86l11.5-7.36a1 1 0 0 0 0-1.72L9.5 4.28A1 1 0 0 0 8 5.14z"/></svg>
+            </div>
+            <div class="author-play-label">Watch the message</div>
+            <div class="author-play-duration">1:54</div>
+          </div>
+          <span class="author-corner author-corner--tl"></span>
+          <span class="author-corner author-corner--tr"></span>
+          <span class="author-corner author-corner--bl"></span>
+          <span class="author-corner author-corner--br"></span>
+        </div>
+      </div>
+
+      <div class="author-bottom reveal d2">
+        <div class="author-quote-block">
+          <p class="author-quote">
+            I was looking for a simple way to track my nutrition — <em>and couldn't find one.</em> So I built it myself.
+          </p>
+        </div>
+        <div class="author-info">
+          <img src="./avatar.jpg" class="author-avatar" />
+          <div class="author-meta">
+            <div class="author-name">Andriy</div>
+            <div class="author-role">Founder NutriTrack</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="cta-section">
+    <div class="eyebrow reveal" style="justify-content:center">Get started</div>
+    <h2 class="reveal d1">Take control of<br>your nutrition</h2>
+    <p class="reveal d2">The first step is free. No credit card. No unnecessary questions.</p>
+    <a class="btn-primary reveal d3" href="https://nutritrack-ochre.vercel.app" style="display:inline-flex;font-size:16px;padding:18px 40px;">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+      Start losing weight
+    </a>
+    <div class="cta-pills reveal d4">
+      <div class="cta-pill">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+        No ads
+      </div>
+      <div class="cta-pill">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+        Data protected
+      </div>
+      <div class="cta-pill">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+        Cancel anytime
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-inner">
+      <img src="./favicon.png" alt="NutriTrack" />
+      <span class="footer-brand">NutriTrack</span>
+    </div>
+    <p>Made with ❤️ for those who care about themselves &nbsp;·&nbsp; © 2026 NutriTrack</p>
+  </footer>
+
+  <script>
+    // ── PARTICLES ──────────────────────────────────────────────────────
+    (function() {
+      const canvas = document.getElementById('particles-canvas');
+      const ctx = canvas.getContext('2d');
+      let W, H, particles = [];
+
+      function resize() {
+        W = canvas.width  = window.innerWidth;
+        H = canvas.height = window.innerHeight;
+      }
+      window.addEventListener('resize', resize);
+      resize();
+
+      const N = 55;
+      for (let i = 0; i < N; i++) {
+        particles.push({
+          x: Math.random() * W,
+          y: Math.random() * H,
+          r: Math.random() * 1.5 + 0.3,
+          vx: (Math.random() - 0.5) * 0.25,
+          vy: (Math.random() - 0.5) * 0.25,
+          a: Math.random() * 0.5 + 0.1,
+        });
+      }
+
+      function draw() {
+        ctx.clearRect(0, 0, W, H);
+        particles.forEach(p => {
+          p.x += p.vx; p.y += p.vy;
+          if (p.x < 0) p.x = W; if (p.x > W) p.x = 0;
+          if (p.y < 0) p.y = H; if (p.y > H) p.y = 0;
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(34,197,94,${p.a})`;
+          ctx.fill();
+        });
+
+        // connections
+        for (let i = 0; i < N; i++) {
+          for (let j = i + 1; j < N; j++) {
+            const dx = particles[i].x - particles[j].x;
+            const dy = particles[i].y - particles[j].y;
+            const dist = Math.sqrt(dx*dx + dy*dy);
+            if (dist < 130) {
+              ctx.beginPath();
+              ctx.moveTo(particles[i].x, particles[i].y);
+              ctx.lineTo(particles[j].x, particles[j].y);
+              ctx.strokeStyle = `rgba(34,197,94,${0.06 * (1 - dist/130)})`;
+              ctx.lineWidth = 0.5;
+              ctx.stroke();
+            }
+          }
+        }
+        requestAnimationFrame(draw);
+      }
+      draw();
+    })();
+
+    // ── NAV SCROLL ─────────────────────────────────────────────────────
+    const nav = document.getElementById('nav');
+    window.addEventListener('scroll', () => {
+      nav.classList.toggle('scrolled', window.scrollY > 40);
+    }, { passive: true });
+
+    // ── REVEAL ─────────────────────────────────────────────────────────
+    const reveals = document.querySelectorAll('.reveal');
+    const io = new IntersectionObserver(entries => {
+      entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); io.unobserve(e.target); } });
+    }, { threshold: 0.12 });
+    reveals.forEach(el => io.observe(el));
+
+    // 3D tilt removed
+
+    // ── AUTHOR VIDEO PLAYER ─────────────────────────────────────────────
+    (function() {
+      const video = document.getElementById('author-video');
+      const overlay = document.getElementById('author-play-overlay');
+      const wrap = document.getElementById('author-video-wrap');
+      if (!video || !overlay) return;
+
+      let userStarted = false;
+
+      overlay.addEventListener('click', function() {
+        userStarted = true;
+        overlay.classList.add('is-hidden');
+        video.controls = true;
+        video.currentTime = 0;
+        video.play();
+      });
+
+      video.addEventListener('pause', function() {
+        if (!userStarted || (!video.ended && video.currentTime > 0.5)) return;
+        userStarted = false;
+        overlay.classList.remove('is-hidden');
+        video.controls = false;
+      });
+
+      video.addEventListener('ended', function() {
+        userStarted = false;
+        overlay.classList.remove('is-hidden');
+        video.controls = false;
+      });
+    })();
+
+    // ── LIVE CALORIE COUNTER ───────────────────────────────────────────
+    (function() {
+      const el = document.getElementById('cal-counter');
+      const ring = document.getElementById('ring-progress');
+      const goal = 2000;
+      let current = 0;
+      const target = 1420;
+
+      setTimeout(() => {
+        const duration = 1800;
+        const start = performance.now();
+        function animate(now) {
+          const t = Math.min((now - start) / duration, 1);
+          const ease = 1 - Math.pow(1 - t, 3);
+          current = Math.round(target * ease);
+          el.textContent = current.toLocaleString('en');
+          const circumference = 94.2;
+          const progress = current / goal;
+          ring.style.strokeDashoffset = circumference * (1 - Math.min(progress, 1));
+          if (t < 1) requestAnimationFrame(animate);
+        }
+        requestAnimationFrame(animate);
+      }, 800);
+    })();
+  </script>
+</body>
+</html>
