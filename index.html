@@ -437,6 +437,15 @@
       white-space: nowrap;
     }
     .marquee-item svg { color: var(--g600); flex-shrink: 0; }
+    .marquee-section::before,
+    .marquee-section::after {
+      content: '';
+      position: absolute;
+      top: 0; bottom: 0; width: 80px;
+      z-index: 2; pointer-events: none;
+    }
+    .marquee-section::before { left: 0; background: linear-gradient(90deg, var(--bg), transparent); }
+    .marquee-section::after { right: 0; background: linear-gradient(270deg, var(--bg), transparent); }
 
     /* ── SECTIONS ── */
     .section {
@@ -1245,6 +1254,37 @@
       .section { padding: 72px 20px; }
       .stats-grid { grid-template-columns: 1fr 1fr; }
     }
+
+    /* ── MOBILE PERFORMANCE ── */
+    @media (max-width: 768px) {
+      body::after { display: none; }
+      #particles-canvas { opacity: 0.2; }
+      .glow-orb { opacity: 0.25; }
+      .glow-orb-1 { width: 300px; height: 300px; filter: blur(80px); }
+      .glow-orb-2 { width: 250px; height: 250px; filter: blur(80px); }
+      .bento-ai::after { animation: none; }
+      .author-video-glow { display: none; }
+      .author-video-wrap::before { display: none; }
+      .float-badge { backdrop-filter: none; -webkit-backdrop-filter: none; }
+      .live-counter { backdrop-filter: none; -webkit-backdrop-filter: none; }
+      .btn-ghost { backdrop-filter: none; -webkit-backdrop-filter: none; }
+      .hero-logo-anim { width: 200px; height: 200px; filter: drop-shadow(0 0 12px rgba(34,197,94,0.5)); }
+      .cta-section { padding: 100px 20px; }
+      .author-section { padding: 80px 20px; }
+      .author-play-btn::before { animation: none; }
+    }
+    @media (max-width: 400px) {
+      .hero { padding: 100px 16px 48px; gap: 40px; }
+      .hero h1 { letter-spacing: -1.5px; }
+      .hero-btns { gap: 8px; }
+      .btn-primary { padding: 14px 24px; font-size: 14px; }
+      .btn-ghost { padding: 13px 20px; font-size: 14px; }
+      .bento-card { padding: 24px 20px; }
+      .platform-card { padding: 24px 20px; }
+      .install-card { padding: 28px 24px; }
+      .stats-grid { grid-template-columns: 1fr; }
+      .stat-num { font-size: 40px; }
+    }
   </style>
 </head>
 <body>
@@ -1533,7 +1573,7 @@
       <div class="author-cinema reveal d1">
         <div class="author-video-glow"></div>
         <div class="author-video-wrap" id="author-video-wrap">
-          <video id="author-video" src="./video.mp4#t=1" playsinline preload="auto"></video>
+          <video id="author-video" src="./video.mp4#t=1" playsinline preload="metadata"></video>
           <div class="author-play-overlay" id="author-play-overlay">
             <div class="author-play-btn">
               <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5.14v14.72a1 1 0 0 0 1.5.86l11.5-7.36a1 1 0 0 0 0-1.72L9.5 4.28A1 1 0 0 0 8 5.14z"/></svg>
@@ -1601,11 +1641,14 @@
   </footer>
 
   <script>
-    // ── PARTICLES ──────────────────────────────────────────────────────
+    // ── PARTICLES (optimized) ────────────────────────────────────────
     (function() {
       const canvas = document.getElementById('particles-canvas');
       const ctx = canvas.getContext('2d');
-      let W, H, particles = [];
+      let W, H, particles = [], raf;
+      const isMobile = window.innerWidth < 768;
+      const N = isMobile ? 20 : 55;
+      const CONN_DIST = isMobile ? 0 : 130; // no connections on mobile
 
       function resize() {
         W = canvas.width  = window.innerWidth;
@@ -1614,21 +1657,29 @@
       window.addEventListener('resize', resize);
       resize();
 
-      const N = 55;
       for (let i = 0; i < N; i++) {
         particles.push({
           x: Math.random() * W,
           y: Math.random() * H,
           r: Math.random() * 1.5 + 0.3,
-          vx: (Math.random() - 0.5) * 0.25,
-          vy: (Math.random() - 0.5) * 0.25,
+          vx: (Math.random() - 0.5) * 0.2,
+          vy: (Math.random() - 0.5) * 0.2,
           a: Math.random() * 0.5 + 0.1,
         });
       }
 
+      // pause when tab not visible
+      let isVisible = true;
+      document.addEventListener('visibilitychange', () => {
+        isVisible = !document.hidden;
+        if (isVisible) raf = requestAnimationFrame(draw);
+      });
+
       function draw() {
+        if (!isVisible) return;
         ctx.clearRect(0, 0, W, H);
-        particles.forEach(p => {
+        for (let i = 0; i < N; i++) {
+          const p = particles[i];
           p.x += p.vx; p.y += p.vy;
           if (p.x < 0) p.x = W; if (p.x > W) p.x = 0;
           if (p.y < 0) p.y = H; if (p.y > H) p.y = 0;
@@ -1636,27 +1687,29 @@
           ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
           ctx.fillStyle = `rgba(34,197,94,${p.a})`;
           ctx.fill();
-        });
-
-        // connections
-        for (let i = 0; i < N; i++) {
-          for (let j = i + 1; j < N; j++) {
-            const dx = particles[i].x - particles[j].x;
-            const dy = particles[i].y - particles[j].y;
-            const dist = Math.sqrt(dx*dx + dy*dy);
-            if (dist < 130) {
-              ctx.beginPath();
-              ctx.moveTo(particles[i].x, particles[i].y);
-              ctx.lineTo(particles[j].x, particles[j].y);
-              ctx.strokeStyle = `rgba(34,197,94,${0.06 * (1 - dist/130)})`;
-              ctx.lineWidth = 0.5;
-              ctx.stroke();
+        }
+        // connections (desktop only)
+        if (CONN_DIST > 0) {
+          for (let i = 0; i < N; i++) {
+            for (let j = i + 1; j < N; j++) {
+              const dx = particles[i].x - particles[j].x;
+              const dy = particles[i].y - particles[j].y;
+              const d2 = dx*dx + dy*dy;
+              if (d2 < CONN_DIST * CONN_DIST) {
+                const dist = Math.sqrt(d2);
+                ctx.beginPath();
+                ctx.moveTo(particles[i].x, particles[i].y);
+                ctx.lineTo(particles[j].x, particles[j].y);
+                ctx.strokeStyle = `rgba(34,197,94,${0.06 * (1 - dist/CONN_DIST)})`;
+                ctx.lineWidth = 0.5;
+                ctx.stroke();
+              }
             }
           }
         }
-        requestAnimationFrame(draw);
+        raf = requestAnimationFrame(draw);
       }
-      draw();
+      raf = requestAnimationFrame(draw);
     })();
 
     // ── NAV SCROLL ─────────────────────────────────────────────────────
@@ -1671,6 +1724,36 @@
       entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); io.unobserve(e.target); } });
     }, { threshold: 0.12 });
     reveals.forEach(el => io.observe(el));
+
+    // ── MARQUEE DYNAMIC CLONE ──────────────────────────────────────────
+    (function() {
+      const track = document.getElementById('marquee');
+      if (!track) return;
+      const items = track.querySelectorAll('.marquee-item');
+      const origCount = items.length / 2; // already has 1 duplicate set
+      // clone enough sets so total width > 3x viewport
+      const itemW = 190; // approx width per item including gap
+      const setsNeeded = Math.ceil((window.innerWidth * 3) / (origCount * itemW));
+      const extra = Math.max(0, setsNeeded - 2); // already have 2 sets
+      for (let s = 0; s < extra; s++) {
+        for (let i = 0; i < origCount; i++) {
+          track.appendChild(items[i].cloneNode(true));
+        }
+      }
+      // adjust animation: -50% only works for 2 copies, recalculate
+      const totalSets = 2 + extra;
+      const pct = (100 / totalSets).toFixed(4);
+      track.style.animation = `marquee ${12 * totalSets}s linear infinite`;
+      // update keyframe to match
+      const sheet = document.styleSheets[0];
+      for (let i = 0; i < sheet.cssRules.length; i++) {
+        if (sheet.cssRules[i].name === 'marquee') {
+          sheet.deleteRule(i);
+          sheet.insertRule(`@keyframes marquee { from{transform:translateX(0)} to{transform:translateX(-${pct}%)} }`, i);
+          break;
+        }
+      }
+    })();
 
     // 3D tilt removed
 
