@@ -973,7 +973,6 @@
       overflow: hidden;
       aspect-ratio: 16/9;
       background: #000;
-      cursor: pointer;
       z-index: 1;
       border: 1.5px solid rgba(34,197,94,0.25);
       box-shadow:
@@ -1272,6 +1271,9 @@
       .cta-section { padding: 100px 20px; }
       .author-section { padding: 80px 20px; }
       .author-play-btn::before { animation: none; }
+      .hero-visual { display: none; }
+      .hero-live { display: none; }
+      .hero { min-height: auto; padding-bottom: 60px; }
     }
     @media (max-width: 400px) {
       .hero { padding: 100px 16px 48px; gap: 40px; }
@@ -1573,14 +1575,7 @@
       <div class="author-cinema reveal d1">
         <div class="author-video-glow"></div>
         <div class="author-video-wrap" id="author-video-wrap">
-          <video id="author-video" src="./videoen.mp4#t=1" playsinline preload="metadata"></video>
-          <div class="author-play-overlay" id="author-play-overlay">
-            <div class="author-play-btn">
-              <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5.14v14.72a1 1 0 0 0 1.5.86l11.5-7.36a1 1 0 0 0 0-1.72L9.5 4.28A1 1 0 0 0 8 5.14z"/></svg>
-            </div>
-            <div class="author-play-label">Watch the message</div>
-            <div class="author-play-duration">1:54</div>
-          </div>
+          <div style="padding:56.25% 0 0 0;position:relative;"><iframe src="https://player.vimeo.com/video/1169202849?badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479" frameborder="0" allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share" referrerpolicy="strict-origin-when-cross-origin" style="position:absolute;top:0;left:0;width:100%;height:100%;" title="NutriTrack_en"></iframe></div>
           <span class="author-corner author-corner--tl"></span>
           <span class="author-corner author-corner--tr"></span>
           <span class="author-corner author-corner--bl"></span>
@@ -1752,36 +1747,7 @@
 
     // 3D tilt removed
 
-    // ── AUTHOR VIDEO PLAYER ─────────────────────────────────────────────
-    (function() {
-      const video = document.getElementById('author-video');
-      const overlay = document.getElementById('author-play-overlay');
-      const wrap = document.getElementById('author-video-wrap');
-      if (!video || !overlay) return;
-
-      let userStarted = false;
-
-      overlay.addEventListener('click', function() {
-        userStarted = true;
-        overlay.classList.add('is-hidden');
-        video.controls = true;
-        video.currentTime = 0;
-        video.play();
-      });
-
-      video.addEventListener('pause', function() {
-        if (!userStarted || (!video.ended && video.currentTime > 0.5)) return;
-        userStarted = false;
-        overlay.classList.remove('is-hidden');
-        video.controls = false;
-      });
-
-      video.addEventListener('ended', function() {
-        userStarted = false;
-        overlay.classList.remove('is-hidden');
-        video.controls = false;
-      });
-    })();
+    // (video player removed — using Vimeo embed)
 
     // ── LIVE CALORIE COUNTER ───────────────────────────────────────────
     (function() {
@@ -1808,5 +1774,6 @@
       }, 800);
     })();
   </script>
+  <script src="https://player.vimeo.com/api/player.js"></script>
 </body>
 </html>
