@@ -3,511 +3,180 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>NutriTrack — smart calorie tracker</title>
-  <meta name="description" content="NutriTrack — AI calorie, macros & weight tracker. Describe your meal in words — AI calculates everything. No ads. Cloud-synced data." />
+  <title>NutriTrack — AI nutrition app for iPhone</title>
+  <meta name="description" content="NutriTrack is a minimal AI nutrition app for iPhone: AI nutritionist, barcode scan, personal food database, weight tracking, and weekly AI reports." />
   <link rel="canonical" href="https://nutritrack-ochre.vercel.app" />
+  <link rel="alternate" hreflang="uk" href="https://nutritrack-ochre.vercel.app/index.html" />
+  <link rel="alternate" hreflang="en" href="https://nutritrack-ochre.vercel.app/en.html" />
   <link rel="icon" href="./favicon.png" />
 
-  <!-- OG / Social -->
-  <meta property="og:title" content="NutriTrack — AI calorie tracker" />
-  <meta property="og:description" content="Describe your meal in words — AI calculates the calories. No ads. Cloud-synced data." />
+  <meta property="og:title" content="NutriTrack — AI nutrition app for iPhone" />
+  <meta property="og:description" content="AI nutritionist. Barcode scan. Personal food database. Weight tracking. Weekly AI reports." />
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://nutritrack-ochre.vercel.app" />
-  <meta property="og:image" content="./og-image.png" />
+  <meta property="og:image" content="./hero-mockup.webp" />
   <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="NutriTrack — AI nutrition app for iPhone" />
+  <meta name="twitter:description" content="AI nutritionist. Barcode scan. Personal food database. Weight tracking. Weekly AI reports." />
+  <meta name="twitter:image" content="./hero-mockup.webp" />
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap" rel="stylesheet" />
-
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Sora:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="./style.css" />
   <link rel="preload" as="image" href="./hero-mockup.webp" />
 </head>
 <body>
+  <div class="page-shell">
+    <header class="topbar">
+      <a class="brand" href="#">
+        <img src="./favicon.png" alt="NutriTrack" />
+        <span>NutriTrack</span>
+      </a>
 
-  <!-- PARTICLES -->
-  <canvas id="particles-canvas"></canvas>
-  <div class="glow-orb glow-orb-1"></div>
-  <div class="glow-orb glow-orb-2"></div>
+      <nav class="topnav">
+        <a href="#features">Features</a>
+        <a href="#app">App</a>
+        <a href="#cta">Start</a>
+      </nav>
 
-  <!-- NAV -->
-  <nav id="nav">
-    <a class="nav-logo" href="#">
-      <img src="./favicon.png" alt="NutriTrack" />
-      NutriTrack
-    </a>
-    <div class="nav-links">
-      <a class="nav-link" href="#features">Features</a>
-      <a class="nav-link" href="#how">How it works</a>
-      <a class="nav-link" href="#install">Install</a>
-      <div class="lang-toggle">
-        <a href="./index.html">UA</a>
-        <a href="./en.html" class="active">EN</a>
+      <div class="topbar-actions">
+        <div class="lang-toggle">
+          <a href="./index.html">UA</a>
+          <a href="./en.html" class="active">EN</a>
+        </div>
+        <a class="nav-cta" href="https://nutritrack-ochre.vercel.app">Early access</a>
       </div>
-      <a class="nav-cta" href="https://nutritrack-ochre.vercel.app">Account →</a>
-    </div>
-  </nav>
+    </header>
 
-  <!-- HERO -->
-  <section class="hero">
-    <div class="hero-content">
-      <div class="hero-badge reveal">
-        <span class="badge-dot"></span>
-        Early access · Free
-      </div>
-
-      <h1 class="reveal d1">
-        Eat mindfully.<br>
-        Achieve <span class="accent">results.</span>
-      </h1>
-
-      <p class="hero-desc reveal d2">
-        An AI tracker that understands you. Describe your meal in plain words — NutriTrack instantly calculates calories and macros. No spreadsheets, no hassle.
-      </p>
-
-      <div class="hero-btns reveal d3">
-        <a class="btn-primary" href="https://nutritrack-ochre.vercel.app">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
-          Start losing weight
-        </a>
-        <a class="btn-ghost" href="#features">Learn more</a>
-      </div>
-
-      <div class="hero-live reveal d4">
-        <div class="live-counter">
-          <div class="live-counter-ring">
-            <svg viewBox="0 0 36 36">
-              <circle class="ring-bg" cx="18" cy="18" r="15" stroke-dasharray="94.2" stroke-dashoffset="0"/>
-              <circle class="ring-fill" cx="18" cy="18" r="15" stroke-dasharray="94.2" id="ring-progress"/>
-            </svg>
-          </div>
-          <div class="live-counter-info">
-            <div class="live-counter-val" id="cal-counter">1,420</div>
-            <div class="live-counter-label">kcal today</div>
-          </div>
-        </div>
-        <div class="live-pill">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
-          No ads
-        </div>
-        <div class="live-pill">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
-          iOS · Android · Web
-        </div>
-      </div>
-    </div>
-
-    <div class="hero-visual reveal d2">
-      <img class="hero-logo-anim" src="./logoanim.svg" alt="" />
-      <div class="tilt-wrapper" id="tilt">
-        <img src="./hero-mockup.webp" alt="NutriTrack app" />
-
-        <div class="float-badge float-badge-1">
-          <span class="float-badge-dot"></span>
-          AI calculated in 1 sec
-        </div>
-        <div class="float-badge float-badge-2">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg>
-          −1.2 kg per month
-        </div>
-        <div class="float-badge float-badge-3">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>
-          Daily goal reached
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- MARQUEE -->
-  <div class="marquee-section">
-    <div class="marquee-track" id="marquee">
-      <span class="marquee-item"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg> AI meal analysis</span>
-      <span class="marquee-item"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg> Calorie chart</span>
-      <span class="marquee-item"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg> Weight dynamics</span>
-      <span class="marquee-item"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><rect width="14" height="20" x="5" y="2" rx="2"/><path d="M9 12h6"/><path d="M9 16h4"/></svg> Food database</span>
-      <span class="marquee-item"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="m9 12 2 2 4-4"/></svg> Supplement tracker</span>
-      <span class="marquee-item"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3z"/></svg> iOS Widget</span>
-      <span class="marquee-item"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M18 20V10"/><path d="M12 20V4"/><path d="M6 20v-6"/></svg> Macros stats</span>
-      <span class="marquee-item"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg> Google Auth</span>
-      <!-- duplicate for seamless loop -->
-      <span class="marquee-item"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg> AI meal analysis</span>
-      <span class="marquee-item"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg> Calorie chart</span>
-      <span class="marquee-item"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg> Weight dynamics</span>
-      <span class="marquee-item"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><rect width="14" height="20" x="5" y="2" rx="2"/><path d="M9 12h6"/><path d="M9 16h4"/></svg> Food database</span>
-      <span class="marquee-item"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="m9 12 2 2 4-4"/></svg> Supplement tracker</span>
-      <span class="marquee-item"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3z"/></svg> iOS Widget</span>
-      <span class="marquee-item"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M18 20V10"/><path d="M12 20V4"/><path d="M6 20v-6"/></svg> Macros stats</span>
-      <span class="marquee-item"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg> Google Auth</span>
-    </div>
-  </div>
-
-  <!-- FEATURES -->
-  <section class="section" id="features">
-    <div class="section-inner">
-      <div class="eyebrow reveal">Features</div>
-      <h2 class="section-title reveal d1">Solves real problems<br>— not made-up ones</h2>
-      <p class="section-desc reveal d2">We built the app for those who have tried counting calories before and gave up. Because it was too complicated.</p>
-
-      <div class="bento-grid">
-
-        <div class="bento-card bento-ai reveal">
-          <div class="ai-tag">
-            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3z"/></svg>
-            AI
-          </div>
-          <div class="bento-title">AI nutritionist counts for you</div>
-          <p class="bento-desc">Weigh your food, message the nutritionist and get calories in a second. Just describe what you ate — AI calculates all nutrients instantly.</p>
-          <div class="bento-demo">
-            <span class="bento-demo-text">"Buckwheat 200g, cucumber & tomato salad 250g"</span>
-            <span class="bento-demo-result">387 kcal →</span>
-          </div>
-        </div>
-
-        <div class="bento-card reveal d1">
-          <div class="bento-icon">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
-          </div>
-          <div class="bento-title">"I barely ate anything..."</div>
-          <p class="bento-desc">Feel like you eat little but the scale won't budge? A daily journal reveals the real picture — where extra calories hide.</p>
-        </div>
-
-        <div class="bento-card reveal d1">
-          <div class="bento-icon">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg>
-          </div>
-          <div class="bento-title">Finally see real results</div>
-          <p class="bento-desc">Don't trust feelings — trust the chart. Monthly weight dynamics show the real trend and keep you motivated.</p>
-        </div>
-
-        <div class="bento-card bento-wide reveal d2">
-          <div class="bento-icon">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"><path d="M21 12c.552 0 1.005-.449.95-.998a10 10 0 0 0-8.953-8.951c-.55-.055-.998.398-.998.95v8a1 1 0 0 0 1 1z"/><path d="M21.21 15.89A10 10 0 1 1 8 2.83"/></svg>
-          </div>
-          <div class="bento-title">Understand why the weight won't go</div>
-          <p class="bento-desc">Weekly calorie and macro stats answer the key question: "where do I slip up?" See the patterns — fix the habits. Not with guesses, but with data.</p>
-        </div>
-
-        <div class="bento-card reveal d2">
-          <div class="bento-icon">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="m9 12 2 2 4-4"/></svg>
-          </div>
-          <div class="bento-title">Forgetting your vitamins?</div>
-          <p class="bento-desc">The supplement tracker reminds and records. One tap — and the streak continues. Never miss again.</p>
-        </div>
-
-        <div class="bento-card reveal d3">
-          <div class="bento-icon">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"><rect width="14" height="20" x="5" y="2" rx="2"/><path d="M15 2v4H9V2"/><path d="M9 12h6"/><path d="M9 16h4"/></svg>
-          </div>
-          <div class="bento-title">Don't search for the same thing twice</div>
-          <p class="bento-desc">Save your meals once — and add them in one tap. Your personal food database is always at hand.</p>
-        </div>
-
-        <div class="bento-card reveal d3">
-          <div class="bento-icon">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="M12 8v4"/><path d="M12 16h.01"/></svg>
-          </div>
-          <div class="bento-title">Eat what you want — and lose weight</div>
-          <p class="bento-desc">No diets needed. Just understand your daily norm. When you see the numbers — you naturally start making better choices.</p>
-        </div>
-
-      </div>
-    </div>
-  </section>
-
-  <!-- INSTALL -->
-  <section class="section" id="install">
-    <div class="section-inner">
-      <div class="eyebrow reveal">Availability</div>
-      <h2 class="section-title reveal d1">Available on<br>all platforms</h2>
-      <p class="section-desc reveal d2">The web version is ready — open it right now. A native iOS app is in development.</p>
-
-      <!-- STATUS CARDS -->
-      <div class="platform-cards">
-
-        <div class="platform-card platform-ready reveal d1">
-          <div class="platform-status">
-            <span class="status-dot status-live"></span>
-            Available now
-          </div>
-          <div class="platform-icon">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
-          </div>
-          <div class="platform-name">iPhone</div>
-          <div class="platform-desc">Web app via Safari.<br>Installs to home screen like a native app.</div>
-          <div class="platform-steps">
-            <div class="pstep"><span class="pstep-n">1</span> Safari → "Share"</div>
-            <div class="pstep"><span class="pstep-n">2</span> "Add to Home Screen"</div>
-            <div class="pstep"><span class="pstep-n">3</span> Done in 10 seconds</div>
-          </div>
-        </div>
-
-        <div class="platform-card platform-ready reveal d2">
-          <div class="platform-status">
-            <span class="status-dot status-live"></span>
-            Available now
-          </div>
-          <div class="platform-icon">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor"><path d="M17.523 15.341 14.06 12l3.463-3.341A.75.75 0 0 0 16.99 7.5H7.01a.75.75 0 0 0-.533 1.159L9.94 12l-3.463 3.341A.75.75 0 0 0 7.01 16.5h9.98a.75.75 0 0 0 .533-1.159z"/></svg>
-          </div>
-          <div class="platform-name">Android</div>
-          <div class="platform-desc">Web app via Chrome.<br>Full experience without the App Store.</div>
-          <div class="platform-steps">
-            <div class="pstep"><span class="pstep-n">1</span> Chrome → menu ⋮</div>
-            <div class="pstep"><span class="pstep-n">2</span> "Add to Home Screen"</div>
-            <div class="pstep"><span class="pstep-n">3</span> Confirm — and you're set!</div>
-          </div>
-        </div>
-
-        <div class="platform-card platform-ready reveal d3">
-          <div class="platform-status">
-            <span class="status-dot status-live"></span>
-            Available now
-          </div>
-          <div class="platform-icon">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"><rect x="2" y="4" width="20" height="14" rx="2"/><path d="M8 20h8M12 18v2"/></svg>
-          </div>
-          <div class="platform-name">Desktop</div>
-          <div class="platform-desc">Open in any browser.<br>Full version on the big screen.</div>
-          <div class="platform-steps">
-            <div class="pstep"><span class="pstep-n">✓</span> Just open the link</div>
-            <div class="pstep"><span class="pstep-n">✓</span> Sign in with Google</div>
-            <div class="pstep"><span class="pstep-n">✓</span> No installation needed</div>
-          </div>
-        </div>
-
-        <div class="platform-card platform-wip reveal d4">
-          <div class="platform-status">
-            <span class="status-dot status-wip"></span>
-            In development
-          </div>
-          <div class="platform-icon platform-icon-muted">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
-          </div>
-          <div class="platform-name">iOS Native <span class="wip-badge">SwiftUI</span></div>
-          <div class="platform-desc">Native App Store app built with Swift.<br>Faster, with Live Activity and Widgets.</div>
-          <div class="platform-features">
-            <div class="wip-feature"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3z"/></svg> Lock Screen Widget</div>
-            <div class="wip-feature"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg> Live Activity</div>
-            <div class="wip-feature"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.99 12a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.92 1.2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 8.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg> Siri Shortcuts</div>
-          </div>
-        </div>
-
-      </div>
-    </div>
-  </section>
-
-  <!-- AUTHOR VIDEO -->
-  <section class="author-section">
-    <div class="author-inner">
-
-      <div class="author-header reveal">
-        <div class="author-label">From the author</div>
-        <div class="author-heading">Why I created <em>NutriTrack</em></div>
-      </div>
-
-      <div class="author-cinema reveal d1">
-        <div class="author-video-glow"></div>
-        <div class="author-video-wrap" id="author-video-wrap">
-          <div style="padding:56.25% 0 0 0;position:relative;"><iframe loading="lazy" src="https://player.vimeo.com/video/1169202849?badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479" frameborder="0" allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share" referrerpolicy="strict-origin-when-cross-origin" style="position:absolute;top:0;left:0;width:100%;height:100%;" title="NutriTrack_en"></iframe></div>
-          <span class="author-corner author-corner--tl"></span>
-          <span class="author-corner author-corner--tr"></span>
-          <span class="author-corner author-corner--bl"></span>
-          <span class="author-corner author-corner--br"></span>
-        </div>
-      </div>
-
-      <div class="author-bottom reveal d2">
-        <div class="author-quote-block">
-          <p class="author-quote">
-            I was looking for a simple way to track my nutrition — <em>and couldn't find one.</em> So I built it myself.
+    <main>
+      <section class="hero">
+        <div class="hero-copy">
+          <div class="hero-badge">iPhone-first AI nutrition app</div>
+          <h1>Food.<br>No noise.</h1>
+          <p>
+            NutriTrack does not sell “another calorie tracker”.
+            It sells control: AI nutritionist, barcode scan, saved foods, weight tracking, and weekly AI reports.
           </p>
-        </div>
-        <div class="author-info">
-          <img src="./avatar.jpg" loading="lazy" class="author-avatar" />
-          <div class="author-meta">
-            <div class="author-name">Andriy</div>
-            <div class="author-role">Founder NutriTrack</div>
+
+          <div class="hero-actions">
+            <a class="btn-primary" href="https://nutritrack-ochre.vercel.app">Get early access</a>
+            <a class="btn-secondary" href="#features">See features</a>
+          </div>
+
+          <div class="hero-tags">
+            <span>AI nutritionist</span>
+            <span>Barcode scan</span>
+            <span>Weekly AI reports</span>
           </div>
         </div>
+
+        <div class="hero-device">
+          <div class="device-frame">
+            <div class="device-glow"></div>
+            <div class="device-chip chip-top">iPhone app</div>
+            <img src="./hero-mockup.webp" alt="NutriTrack interface on iPhone" />
+            <div class="device-chip chip-left">AI analysis</div>
+            <div class="device-chip chip-right">Weight trend</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="signal-strip" aria-label="Key benefits">
+        <div>AI nutritionist</div>
+        <div>Barcode scan</div>
+        <div>Saved foods</div>
+        <div>Weight tracking</div>
+        <div>Weekly AI reports</div>
+      </section>
+
+      <section class="features" id="features">
+        <div class="section-head">
+          <span class="eyebrow">Features</span>
+          <h2>Short. Sharp. Useful.</h2>
+        </div>
+
+        <div class="feature-grid">
+          <article class="feature-card feature-card-large">
+            <span class="feature-kicker">01</span>
+            <h3>AI nutritionist</h3>
+            <p>Write like a human. Get calories and macros without manual friction.</p>
+          </article>
+
+          <article class="feature-card">
+            <span class="feature-kicker">02</span>
+            <h3>Barcode scan</h3>
+            <p>One scan. One log. No messy database hunting.</p>
+          </article>
+
+          <article class="feature-card">
+            <span class="feature-kicker">03</span>
+            <h3>Saved foods</h3>
+            <p>Your own meals and products stay one tap away.</p>
+          </article>
+
+          <article class="feature-card">
+            <span class="feature-kicker">04</span>
+            <h3>Weight trend</h3>
+            <p>Not a random daily number. A trend you can actually read.</p>
+          </article>
+
+          <article class="feature-card">
+            <span class="feature-kicker">05</span>
+            <h3>Weekly AI reports</h3>
+            <p>A short weekly breakdown instead of dry tables and clutter.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="app-section" id="app">
+        <div class="section-head section-head-narrow">
+          <span class="eyebrow">App-first</span>
+          <h2>The website sells the app.<br>The app sells itself.</h2>
+        </div>
+
+        <div class="app-grid">
+          <div class="app-copy-card">
+            <p class="app-lead">NutriTrack is built around the iPhone experience, not around landing-page copy.</p>
+            <ul class="app-list">
+              <li>Low-friction logging</li>
+              <li>Premium feel instead of “calorie calculator” energy</li>
+              <li>A clean AI layer on top of real daily habits</li>
+            </ul>
+          </div>
+
+          <div class="app-panel-stack">
+            <div class="mini-panel">
+              <span>Native priority</span>
+              <strong>SwiftUI + iPhone UX</strong>
+            </div>
+            <div class="mini-panel">
+              <span>Core loop</span>
+              <strong>Log → trend → report</strong>
+            </div>
+            <div class="mini-panel">
+              <span>Feel</span>
+              <strong>Minimal. Crisp. Expensive.</strong>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="cta-section" id="cta">
+        <span class="eyebrow">Start</span>
+        <h2>Try NutriTrack before everyone else.</h2>
+        <p>Get inside now and be first in line for the native iPhone release.</p>
+        <a class="btn-primary btn-primary-large" href="https://nutritrack-ochre.vercel.app">Request access</a>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-brand">
+        <img src="./favicon.png" alt="NutriTrack" />
+        <span>NutriTrack</span>
       </div>
-
-    </div>
-  </section>
-
-  <!-- CTA -->
-  <section class="cta-section">
-    <div class="eyebrow reveal" style="justify-content:center">Get started</div>
-    <h2 class="reveal d1">Take control of<br>your nutrition</h2>
-    <p class="reveal d2">The first step is free. No credit card. No unnecessary questions.</p>
-    <a class="btn-primary reveal d3" href="https://nutritrack-ochre.vercel.app" style="display:inline-flex;font-size:16px;padding:18px 40px;">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
-      Start losing weight
-    </a>
-    <div class="cta-pills reveal d4">
-      <div class="cta-pill">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
-        No ads
-      </div>
-      <div class="cta-pill">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
-        Data protected
-      </div>
-      <div class="cta-pill">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
-        Cancel anytime
-      </div>
-    </div>
-  </section>
-
-  <!-- FOOTER -->
-  <footer>
-    <div class="footer-inner">
-      <img src="./favicon.png" alt="NutriTrack" />
-      <span class="footer-brand">NutriTrack</span>
-    </div>
-    <p>Made with ❤️ for those who care about themselves &nbsp;·&nbsp; © 2026 NutriTrack</p>
-  </footer>
-
-  <script>
-    // ── PARTICLES (optimized) ────────────────────────────────────────
-    (function() {
-      const canvas = document.getElementById('particles-canvas');
-      const ctx = canvas.getContext('2d');
-      let W, H, particles = [], raf;
-      const isMobile = window.innerWidth < 768;
-      const N = isMobile ? 20 : 55;
-      const CONN_DIST = isMobile ? 0 : 130;
-
-      function resize() {
-        W = canvas.width  = window.innerWidth;
-        H = canvas.height = window.innerHeight;
-      }
-      window.addEventListener('resize', resize);
-      resize();
-
-      for (let i = 0; i < N; i++) {
-        particles.push({
-          x: Math.random() * W,
-          y: Math.random() * H,
-          r: Math.random() * 1.5 + 0.3,
-          vx: (Math.random() - 0.5) * 0.2,
-          vy: (Math.random() - 0.5) * 0.2,
-          a: Math.random() * 0.5 + 0.1,
-        });
-      }
-
-      let isVisible = true;
-      document.addEventListener('visibilitychange', () => {
-        isVisible = !document.hidden;
-        if (isVisible) raf = requestAnimationFrame(draw);
-      });
-
-      function draw() {
-        if (!isVisible) return;
-        ctx.clearRect(0, 0, W, H);
-        for (let i = 0; i < N; i++) {
-          const p = particles[i];
-          p.x += p.vx; p.y += p.vy;
-          if (p.x < 0) p.x = W; if (p.x > W) p.x = 0;
-          if (p.y < 0) p.y = H; if (p.y > H) p.y = 0;
-          ctx.beginPath();
-          ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-          ctx.fillStyle = `rgba(34,197,94,${p.a})`;
-          ctx.fill();
-        }
-        if (CONN_DIST > 0) {
-          for (let i = 0; i < N; i++) {
-            for (let j = i + 1; j < N; j++) {
-              const dx = particles[i].x - particles[j].x;
-              const dy = particles[i].y - particles[j].y;
-              const d2 = dx*dx + dy*dy;
-              if (d2 < CONN_DIST * CONN_DIST) {
-                const dist = Math.sqrt(d2);
-                ctx.beginPath();
-                ctx.moveTo(particles[i].x, particles[i].y);
-                ctx.lineTo(particles[j].x, particles[j].y);
-                ctx.strokeStyle = `rgba(34,197,94,${0.06 * (1 - dist/CONN_DIST)})`;
-                ctx.lineWidth = 0.5;
-                ctx.stroke();
-              }
-            }
-          }
-        }
-        raf = requestAnimationFrame(draw);
-      }
-      raf = requestAnimationFrame(draw);
-    })();
-
-    // ── NAV SCROLL ─────────────────────────────────────────────────────
-    const nav = document.getElementById('nav');
-    window.addEventListener('scroll', () => {
-      nav.classList.toggle('scrolled', window.scrollY > 40);
-    }, { passive: true });
-
-    // ── REVEAL ─────────────────────────────────────────────────────────
-    const reveals = document.querySelectorAll('.reveal');
-    const io = new IntersectionObserver(entries => {
-      entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); io.unobserve(e.target); } });
-    }, { threshold: 0.12 });
-    reveals.forEach(el => io.observe(el));
-
-    // ── MARQUEE DYNAMIC CLONE ──────────────────────────────────────────
-    (function() {
-      const track = document.getElementById('marquee');
-      if (!track) return;
-      const items = track.querySelectorAll('.marquee-item');
-      const origCount = items.length / 2;
-      const itemW = 190;
-      const setsNeeded = Math.ceil((window.innerWidth * 3) / (origCount * itemW));
-      const extra = Math.max(0, setsNeeded - 2);
-      for (let s = 0; s < extra; s++) {
-        for (let i = 0; i < origCount; i++) {
-          track.appendChild(items[i].cloneNode(true));
-        }
-      }
-      const totalSets = 2 + extra;
-      const pct = (100 / totalSets).toFixed(4);
-      track.style.animation = `marquee ${12 * totalSets}s linear infinite`;
-      const sheet = document.styleSheets[0];
-      for (let i = 0; i < sheet.cssRules.length; i++) {
-        if (sheet.cssRules[i].name === 'marquee') {
-          sheet.deleteRule(i);
-          sheet.insertRule(`@keyframes marquee { from{transform:translateX(0)} to{transform:translateX(-${pct}%)} }`, i);
-          break;
-        }
-      }
-    })();
-
-    // 3D tilt removed
-
-    // (video player removed — using Vimeo embed)
-
-    // ── LIVE CALORIE COUNTER ───────────────────────────────────────────
-    (function() {
-      const el = document.getElementById('cal-counter');
-      const ring = document.getElementById('ring-progress');
-      const goal = 2000;
-      let current = 0;
-      const target = 1420;
-
-      setTimeout(() => {
-        const duration = 1800;
-        const start = performance.now();
-        function animate(now) {
-          const t = Math.min((now - start) / duration, 1);
-          const ease = 1 - Math.pow(1 - t, 3);
-          current = Math.round(target * ease);
-          el.textContent = current.toLocaleString('en');
-          const circumference = 94.2;
-          const progress = current / goal;
-          ring.style.strokeDashoffset = circumference * (1 - Math.min(progress, 1));
-          if (t < 1) requestAnimationFrame(animate);
-        }
-        requestAnimationFrame(animate);
-      }, 800);
-    })();
-  </script>
-  <script src="https://player.vimeo.com/api/player.js" defer></script>
+      <p>AI nutrition app for iPhone</p>
+    </footer>
+  </div>
 </body>
 </html>
